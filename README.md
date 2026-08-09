@@ -4,10 +4,11 @@
 
 ## Стек
 
-- Next.js 16 (App Router), JavaScript (без TypeScript)
+- Next.js 16 (App Router), **TypeScript**
 - CSS Modules (без Tailwind), `modern-normalize`
 - Mobile-first, брейкпоінти: 320px / 375px / 768px / 1440px
-- Zustand, React Query, Formik + Yup — підключаються по мірі потреби
+- Zustand (стан), TanStack Query (запити) — провайдер вже підключений у `layout.tsx`
+- Formik + Yup (форми) — переюзабельні валідаційні схеми лежать у `lib/validation`
 - ESLint + Prettier
 
 ## Швидкий старт
@@ -44,15 +45,23 @@
 
 ```
 src/
-  app/           — сторінки (Next.js App Router, файлова маршрутизація)
-    api/         — Route Handler'и (проксі до бекенду)
-  components/    — переюзабельні компоненти, по папці на компонент
+  app/               — сторінки (Next.js App Router, файлова маршрутизація)
+    (auth)/          — публічні сторінки логіну/реєстрації (route group)
+    (private)/       — сторінки, доступні лише авторизованим (route group)
+    api/             — Route Handler'и (проксі до бекенду, поки заглушки — 501)
+  components/        — переюзабельні компоненти, по папці на компонент
+  lib/
+    api/             — axios-інстанс + типізовані функції під кожен ендпоінт бекенду
+    store/           — Zustand-стори
+    validation/      — переюзабельні Yup-схеми (наприклад, `authSchemas`)
+  styles/            — глобальні стилі (`reset.css`, `base.css`, `container.css`)
+  types/             — доменні типи (`User`, `Article` тощо)
 ```
 
 ## Як додати нову сторінку/компонент
 
-1. **Сторінка** — вже створена заглушка в `app/<route>/page.js` (структура маршрутів відповідає беклогу задач). Просто пиши логіку в готовий файл.
-2. **Компонент** — заглушка в `components/<Name>/<Name>.js`. Туди ж додай `<Name>.module.css`, коли знадобляться стилі.
+1. **Сторінка** — вже створена заглушка в `app/<route>/page.tsx` (структура маршрутів відповідає ТЗ). Просто пиши логіку в готовий файл.
+2. **Компонент** — заглушка в `components/<Name>/<Name>.tsx`. Поруч уже лежить порожній `<Name>.module.css` — просто пиши стилі туди й підключай `import styles from "./<Name>.module.css"`.
 
 Кожна сторінка/компонент — окрема папка й окремий файл, тому паралельна робота декількох людей не призводить до конфліктів при мерджі.
 
