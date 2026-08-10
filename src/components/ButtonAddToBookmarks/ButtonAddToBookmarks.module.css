@@ -49,6 +49,10 @@
   background-color: rgb(100 145 121 / 15%);
 }
 
+.button[data-variant="icon"][data-saved="false"]:active:not(:disabled) {
+  background-color: #d1e0d8;
+}
+
 .button[data-variant="wide"]:hover,
 .button[data-variant="wide"]:active:not(:disabled),
 .button[data-variant="icon"][data-saved="true"]:hover,
@@ -80,10 +84,4 @@
   height: 24px;
   color: currentcolor;
   fill: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .button {
-    transition: none;
-  }
 }
