@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import api from "./api";
+import api from "../../app/api/api";
 import type { User } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
 

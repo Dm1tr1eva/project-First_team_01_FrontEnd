@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Metadata } from "next";
 import { Manrope, Merienda } from "next/font/google";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+
 import "modern-normalize/modern-normalize.css";
 import "@/styles/reset.css";
 import "@/styles/base.css";
@@ -31,11 +32,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: Readonly<{
+  children: React.ReactNode;
+
+  modal: React.ReactNode;
+}>) {
   return (
     <html lang="en" className={`${manrope.variable} ${merienda.variable}`}>
       <body>
-        <TanStackProvider>{children}</TanStackProvider>
+        <TanStackProvider>
+          <main>
+            {children} {modal}
+          </main>
+        </TanStackProvider>
       </body>
     </html>
   );
