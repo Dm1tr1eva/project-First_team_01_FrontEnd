@@ -1,27 +1,25 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import css from './Header.module.css';
-import { useAuthStore } from '@/lib/store/authStore';
-import { useRouter, usePathname } from 'next/navigation';
+import Link from "next/link";
+import css from "./Header.module.css";
+import { useAuthStore } from "@/lib/store/authStore";
+import { useRouter, usePathname } from "next/navigation";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function Header() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const getLinkClass = (path: string) => {
-    return pathname === path
-      ? `${css.navigationLink} ${css.active}`
-      : css.navigationLink;
+    return pathname === path ? `${css.navigationLink} ${css.active}` : css.navigationLink;
   };
 
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
-  const user = useAuthStore(state => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
 
   const handleBurger = () => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   };
 
   return (
@@ -32,37 +30,29 @@ export default function Header() {
             onClick={() => setIsOpen(false)}
             href="/"
             className={css.headerLink}
-            aria-label="Home">
+            aria-label="Home"
+          >
             <svg className={css.logoIcon}>
-              <use href="/icon.svg#iconlogo" />
+              <use href="/sprite.svg#iconlogo" />
             </svg>
           </Link>
           <div className={css.navigationDescFild}>
             <nav aria-label="Main Navigation">
               <ul className={css.navigationDesc}>
                 <li className={css.navigationItemDesc}>
-                  <Link
-                    onClick={() => setIsOpen(false)}
-                    href="/"
-                    className={getLinkClass('/')}>
+                  <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
                     Home
                   </Link>
                 </li>
 
                 <li className={css.navigationItemDesc}>
-                  <Link
-                    onClick={() => setIsOpen(false)}
-                    href="/"
-                    className={getLinkClass('/')}>
+                  <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
                     Articles
                   </Link>
                 </li>
 
                 <li className={css.navigationItemDesc}>
-                  <Link
-                    onClick={() => setIsOpen(false)}
-                    href="/"
-                    className={getLinkClass('/')}>
+                  <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
                     Creators
                   </Link>
                 </li>
@@ -74,7 +64,8 @@ export default function Header() {
                         onClick={() => setIsOpen(false)}
                         href="/profile"
                         prefetch={false}
-                        className={getLinkClass('/profile')}>
+                        className={getLinkClass("/profile")}
+                      >
                         My Profile
                       </Link>
                     </li>
@@ -84,7 +75,8 @@ export default function Header() {
                         onClick={() => setIsOpen(false)}
                         href="/"
                         prefetch={false}
-                        className={css.navigationLinkJoinDesc}>
+                        className={css.navigationLinkJoinDesc}
+                      >
                         Create an article
                       </Link>
                     </li>
@@ -93,8 +85,8 @@ export default function Header() {
                       <div className={css.userFieldFirst}>
                         <img
                           className={css.userAvatar}
-                          src={user?.avatar}
-                          alt={user?.email || 'User avatar'}
+                          src={user?.avatarUrl}
+                          alt={user?.email || "User avatar"}
                         />
 
                         <p className={css.userName}>{user?.email}</p>
@@ -111,7 +103,8 @@ export default function Header() {
                         onClick={() => setIsOpen(false)}
                         href="/sign-in"
                         prefetch={false}
-                        className={css.navigationLink}>
+                        className={css.navigationLink}
+                      >
                         Log in
                       </Link>
                     </li>
@@ -121,7 +114,8 @@ export default function Header() {
                         onClick={() => setIsOpen(false)}
                         href="/"
                         prefetch={false}
-                        className={css.navigationLinkJoinDesc}>
+                        className={css.navigationLinkJoinDesc}
+                      >
                         Join now
                       </Link>
                     </li>
@@ -130,20 +124,17 @@ export default function Header() {
               </ul>
             </nav>
             <div>
-              <button
-                className={css.navBarMobButton}
-                type="button"
-                onClick={handleBurger}>
+              <button className={css.navBarMobButton} type="button" onClick={handleBurger}>
                 {isOpen ? (
                   <>
                     <svg width="32" height="32">
-                      <use href="/icon.svg#iconcontrolsclose" />
+                      <use href="/sprite.svg#iconcontrolsclose" />
                     </svg>
                   </>
                 ) : (
                   <>
                     <svg width="32" height="32">
-                      <use href="/icon.svg#icongenericburgerregular" />
+                      <use href="/sprite.svg#icongenericburgerregular" />
                     </svg>
                   </>
                 )}
@@ -152,33 +143,23 @@ export default function Header() {
           </div>
         </div>
       </header>
-      <div
-        className={isOpen ? `${css.navBarMob} ${css.isOpen}` : css.navBarMob}>
+      <div className={isOpen ? `${css.navBarMob} ${css.isOpen}` : css.navBarMob}>
         <nav aria-label="Main Navigation">
           <ul className={css.navigation}>
             <li className={css.navigationItem}>
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/"
-                className={getLinkClass('/')}>
+              <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
                 Home
               </Link>
             </li>
 
             <li className={css.navigationItem}>
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/"
-                className={getLinkClass('/')}>
+              <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
                 Articles
               </Link>
             </li>
 
             <li className={css.navigationItem}>
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/"
-                className={getLinkClass('/')}>
+              <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
                 Creators
               </Link>
             </li>
@@ -190,7 +171,8 @@ export default function Header() {
                     onClick={() => setIsOpen(false)}
                     href="/profile"
                     prefetch={false}
-                    className={getLinkClass('/profile')}>
+                    className={getLinkClass("/profile")}
+                  >
                     My Profile
                   </Link>
                 </li>
@@ -200,7 +182,8 @@ export default function Header() {
                     onClick={() => setIsOpen(false)}
                     href="/"
                     prefetch={false}
-                    className={css.navigationLinkJoin}>
+                    className={css.navigationLinkJoin}
+                  >
                     Create an article
                   </Link>
                 </li>
@@ -209,8 +192,8 @@ export default function Header() {
                   <div className={css.userFieldFirst}>
                     <img
                       className={css.userAvatar}
-                      src={user?.avatar}
-                      alt={user?.email || 'User avatar'}
+                      src={user?.avatarUrl}
+                      alt={user?.email || "User avatar"}
                     />
 
                     <p className={css.userName}>{user?.email}</p>
@@ -228,7 +211,8 @@ export default function Header() {
                     onClick={() => setIsOpen(false)}
                     href="/sign-in"
                     prefetch={false}
-                    className={css.navigationLink}>
+                    className={css.navigationLink}
+                  >
                     Log in
                   </Link>
                 </li>
@@ -238,7 +222,8 @@ export default function Header() {
                     onClick={() => setIsOpen(false)}
                     href="/"
                     prefetch={false}
-                    className={css.navigationLinkJoin}>
+                    className={css.navigationLinkJoin}
+                  >
                     Join now
                   </Link>
                 </li>
