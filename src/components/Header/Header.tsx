@@ -99,8 +99,10 @@ export default function Header() {
 
                         <p className={css.userName}>{user?.email}</p>
                       </div>
-                      <Link href={`/logoutUser/`} className={css.logoutButton}>
-                        Logout
+                      <Link href={`/logoutUser/`}>
+                        <svg width="24" height="24">
+                          <use href="/sprite.svg#icongenericlogout" />
+                        </svg>
                       </Link>
                     </li>
                   </>
@@ -215,8 +217,10 @@ export default function Header() {
                     <p className={css.userName}>{user?.email}</p>
                   </div>
 
-                  <Link href={`/logoutUser/`} className={css.logoutButton}>
-                    Logout
+                  <Link href={`/logoutUser/`}>
+                    <svg width="24" height="24">
+                      <use href="/sprite.svg#icongenericlogout" />
+                    </svg>
                   </Link>
                 </li>
               </>
