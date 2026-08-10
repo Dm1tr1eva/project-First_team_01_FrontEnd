@@ -46,13 +46,21 @@ export default function Header() {
                 </li>
 
                 <li className={css.navigationItemDesc}>
-                  <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
+                  <Link
+                    onClick={() => setIsOpen(false)}
+                    href="/articles"
+                    className={getLinkClass("/articles")}
+                  >
                     Articles
                   </Link>
                 </li>
 
                 <li className={css.navigationItemDesc}>
-                  <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
+                  <Link
+                    onClick={() => setIsOpen(false)}
+                    href="/authors"
+                    className={getLinkClass("/authors")}
+                  >
                     Creators
                   </Link>
                 </li>
@@ -73,7 +81,7 @@ export default function Header() {
                     <li className={css.navigationItem}>
                       <Link
                         onClick={() => setIsOpen(false)}
-                        href="/"
+                        href="/articles/create"
                         prefetch={false}
                         className={css.navigationLinkJoinDesc}
                       >
@@ -101,9 +109,9 @@ export default function Header() {
                     <li className={css.navigationItemDesc}>
                       <Link
                         onClick={() => setIsOpen(false)}
-                        href="/sign-in"
+                        href="/login"
                         prefetch={false}
-                        className={css.navigationLink}
+                        className={getLinkClass("/login")}
                       >
                         Log in
                       </Link>
@@ -112,7 +120,7 @@ export default function Header() {
                     <li className={css.navigationItem}>
                       <Link
                         onClick={() => setIsOpen(false)}
-                        href="/"
+                        href="/register"
                         prefetch={false}
                         className={css.navigationLinkJoinDesc}
                       >
@@ -153,13 +161,21 @@ export default function Header() {
             </li>
 
             <li className={css.navigationItem}>
-              <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
+              <Link
+                onClick={() => setIsOpen(false)}
+                href="/articles"
+                className={getLinkClass("/articles")}
+              >
                 Articles
               </Link>
             </li>
 
             <li className={css.navigationItem}>
-              <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
+              <Link
+                onClick={() => setIsOpen(false)}
+                href="/authors"
+                className={getLinkClass("/authors")}
+              >
                 Creators
               </Link>
             </li>
@@ -180,7 +196,7 @@ export default function Header() {
                 <li className={css.navigationItem}>
                   <Link
                     onClick={() => setIsOpen(false)}
-                    href="/"
+                    href="/articles/create"
                     prefetch={false}
                     className={css.navigationLinkJoin}
                   >
@@ -209,9 +225,9 @@ export default function Header() {
                 <li className={css.navigationItem}>
                   <Link
                     onClick={() => setIsOpen(false)}
-                    href="/sign-in"
+                    href="/login"
                     prefetch={false}
-                    className={css.navigationLink}
+                    className={getLinkClass("/login")}
                   >
                     Log in
                   </Link>
