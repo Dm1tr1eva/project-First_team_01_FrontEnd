@@ -59,14 +59,34 @@ export async function getSavedArticles(): Promise<Article[]> {
   return data;
 }
 
-export async function addSavedArticle(articleId: string): Promise<{ savedArticles: string[] }> {
-  const { data } = await api.post<{ savedArticles: string[] }>(`/users/me/saved/${articleId}`);
-  return data;
+export type SavedArticlesMutationResponse = { savedArticles: string[] };
+
+/**
+ * Клієнт звертається до same-origin Next.js route, а не напряму до backend.
+ * Route Handler безпечно передає HttpOnly cookie та зберігає backend status/message.
+ */
+async function updateSavedArticle(
+  articleId: string,
+  method: "POST" | "DELETE",
+): Promise<SavedArticlesMutationResponse> {
+  const response = await fetch(`/api/users/me/saved/${encodeURIComponent(articleId)}`, { method });
+  const payload = (await response.json()) as SavedArticlesMutationResponse | { message?: string };
+
+  if (!response.ok) {
+    throw new Error(
+      "message" in payload && payload.message ? payload.message : "Unable to update saved articles",
+    );
+  }
+
+  return payload as SavedArticlesMutationResponse;
 }
 
-export async function removeSavedArticle(articleId: string): Promise<{ savedArticles: string[] }> {
-  const { data } = await api.delete<{ savedArticles: string[] }>(`/users/me/saved/${articleId}`);
-  return data;
+export function addSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
+  return updateSavedArticle(articleId, "POST");
+}
+
+export function removeSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
+  return updateSavedArticle(articleId, "DELETE");
 }
 
 // --- articles ---
