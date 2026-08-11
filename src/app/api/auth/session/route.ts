@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { proxyRequest } from "@/lib/api/proxyRequest";
+import { proxyRequest } from "../../../../lib/api/proxyRequest";
 
 export const dynamic = "force-dynamic";
 
