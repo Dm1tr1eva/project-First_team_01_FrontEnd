@@ -12,29 +12,28 @@
 }
 
 .modal {
-  background-color: #ffffff;
+  background: #d1e0d8;
   padding: 56px 32px 0px 32px;
-  border-radius: 8px;
+  border-radius: 32px;
   max-width: 361px;
+  height: 305px;
   width: 100%;
   position: relative;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 .buttonClose {
   position: absolute;
-  background-color: #007bff;
-  color: #ffffff;
   border: none;
   padding: 10px 20px;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
   right: 12px;
   top: 12px;
+  background-color: inherit;
 }
 @media only screen and (min-width: 768px) {
   .modal {
     max-width: 500px;
+    height: 243px;
   }
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import css from "./Modal.module.css";
+import css from "./LogoutModal.module.css";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -31,7 +31,9 @@ const LogoutModal = ({ children, onClose }: ModalProps) => {
       <div className={css.modal} onClick={(e) => e.stopPropagation()}>
         {children}
         <button className={css.buttonClose} onClick={() => router.back()}>
-          Close
+          <svg width="24" height="24">
+            <use href="/sprite.svg#iconcontrolsclose" />
+          </svg>
         </button>
       </div>
     </div>
