@@ -7,13 +7,12 @@ export interface EditArticleButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children" | "type"
 > {
-  /** Додає назву статті до доступного для screen reader підпису. */
   articleTitle?: string;
 }
 
 /**
- * Іконкова action-кнопка для власної статті.
- * ArticlesItem або сторінка профілю передає дію через `onClick`.
+ * @example
+ * <EditArticleButton articleTitle={article.title} onClick={() => openEditor(article._id)} />
  */
 export default function EditArticleButton({
   articleTitle,

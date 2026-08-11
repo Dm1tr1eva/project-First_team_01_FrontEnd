@@ -1,4 +1,5 @@
 import api from "./browserApi";
+
 import type { User, AuthUser } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
 
@@ -54,17 +55,15 @@ export async function getUserArticles(
   return data.data;
 }
 
+type SavedArticlesResponse = { savedArticles: Article[] };
+
 export async function getSavedArticles(): Promise<Article[]> {
-  const { data } = await api.get<Article[]>("/users/me/saved");
-  return data;
+  const { data } = await api.get<SavedArticlesResponse>("/users/me/saved");
+  return data.savedArticles;
 }
 
 export type SavedArticlesMutationResponse = { savedArticles: string[] };
 
-/**
- * Клієнт звертається до same-origin Next.js route, а не напряму до backend.
- * Route Handler безпечно передає HttpOnly cookie та зберігає backend status/message.
- */
 async function updateSavedArticle(
   articleId: string,
   method: "POST" | "DELETE",

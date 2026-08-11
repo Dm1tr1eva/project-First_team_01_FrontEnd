@@ -1,10 +1,8 @@
-import { ReactNode } from "react";
 import { Metadata } from "next";
 import { Manrope, Merienda } from "next/font/google";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import ToastProvider from "@/components/ToastProvider/ToastProvider";
 import "modern-normalize/modern-normalize.css";
-import "react-toastify/dist/ReactToastify.css";
 import "@/styles/reset.css";
 import "@/styles/base.css";
 import "@/styles/container.css";
@@ -33,13 +31,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: Readonly<{
+  children: React.ReactNode;
+  modal?: React.ReactNode;
+}>) {
   return (
     <html lang="en" className={`${manrope.variable} ${merienda.variable}`}>
       <body>
         <TanStackProvider>
-          {children}
-          {/* Глобальний host для toast-повідомлень має бути змонтований лише один раз. */}
+          <main>
+            {children} {modal}
+          </main>
           <ToastProvider />
         </TanStackProvider>
       </body>

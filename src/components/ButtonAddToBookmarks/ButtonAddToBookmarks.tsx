@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { addSavedArticle, removeSavedArticle } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import css from "./ButtonAddToBookmarks.module.css";
@@ -9,33 +9,21 @@ import css from "./ButtonAddToBookmarks.module.css";
 export type BookmarkButtonVariant = "icon" | "wide";
 
 export interface ButtonAddToBookmarksProps {
-  /** MongoDB id статті, який додається або видаляється через saved API. */
   articleId: string;
-  /** Контрольований стан: батьківський компонент визначає, чи id уже збережений. */
   isSaved: boolean;
-  /** `icon` використовується в картці, `wide` — на сторінці статті. */
   variant?: BookmarkButtonVariant;
-  /** Відкриває ModalErrorSave для неавторизованого користувача. */
   onGuestClick: () => void;
-  /**
-   * Backend повертає весь список saved id. Збережіть його в батьківському стані,
-   * щоб усі екземпляри кнопки для цієї статті синхронно оновилися.
-   */
   onSavedArticlesChange: (savedArticleIds: string[]) => void;
 }
 
 const FALLBACK_ERROR_MESSAGE = "Unable to update saved articles";
 
 /**
- * Контрольована кнопка закладок із двома Figma-видами та спільною API-логікою.
- * Вона не зберігає `isSaved` локально: джерелом правди залишається сторінка,
- * список статей або query cache, який передає props.
- *
  * @example
- * const isSaved = savedArticleIds.includes(article.id);
  * <ButtonAddToBookmarks
  *   articleId={article.id}
- *   isSaved={isSaved}
+ *   isSaved={savedArticleIds.includes(article.id)}
+ *   variant="icon"
  *   onGuestClick={() => setIsErrorSaveOpen(true)}
  *   onSavedArticlesChange={setSavedArticleIds}
  * />
