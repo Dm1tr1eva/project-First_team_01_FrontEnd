@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { Metadata } from "next";
 import { Manrope, Merienda } from "next/font/google";
-import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import TanStackProvider from "../components/TanStackProvider/TanStackProvider";
 import "modern-normalize/modern-normalize.css";
 import "@/styles/reset.css";
 import "@/styles/base.css";
 import "@/styles/container.css";
-import AuthProvider from "@/components/AuthProvider/AuthProvider";
-import Footer from "@/components/Footer/Footer";
+import AuthProvider from "../components/AuthProvider/AuthProvider";
+import Footer from "../components/Footer/Footer";
 
 const manrope = Manrope({
   variable: "--font-manrope",
