@@ -1,7 +1,7 @@
+import api from "./browserApi";
+
 import type { User, AuthUser } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
-
-import { api } from "@/app/api/api";
 
 // --- auth ---
 
