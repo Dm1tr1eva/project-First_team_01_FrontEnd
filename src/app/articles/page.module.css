@@ -1,7 +1,9 @@
 .page {
   --articles-accent: #649179;
   --articles-accent-hover: #527c66;
-  --articles-control: #374f42;
+  --articles-filter-border: #9f9f9f;
+  --articles-filter-selected: #d1e0d8;
+  --articles-filter-text: #595d62;
 
   box-sizing: border-box;
   min-height: 100%;
@@ -10,7 +12,8 @@
 }
 
 .container {
-  padding-block: 48px 80px;
+  max-width: 393px;
+  padding-block: 48px;
 }
 
 .toolbar {
@@ -18,15 +21,15 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 48px;
-  margin-top: 20px;
+  min-height: 33px;
+  margin-top: 16px;
 }
 
 .count {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.4;
 }
 
 .message,
@@ -55,12 +58,13 @@
 
 @media screen and (min-width: 768px) {
   .container {
-    padding-block: 48px 96px;
+    max-width: var(--container-width-tablet);
+    padding-block: 48px 64px;
   }
 }
 
 @media screen and (min-width: 1440px) {
   .container {
-    padding-block: 56px 100px;
+    max-width: var(--container-width-desktop);
   }
 }

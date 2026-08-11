@@ -1,9 +1,9 @@
 .button {
   display: block;
   width: 100%;
-  min-height: 48px;
-  margin: 32px auto 0;
-  padding: 10px 24px;
+  height: 57px;
+  margin: 24px auto 0;
+  padding: 16px;
   color: var(--color-bg, #f7fffb);
   font: inherit;
   font-size: 18px;
@@ -34,12 +34,6 @@
 }
 
 @media screen and (min-width: 768px) {
-  .button {
-    max-width: 348px;
-  }
-}
-
-@media screen and (min-width: 1440px) {
   .button {
     max-width: 390px;
   }

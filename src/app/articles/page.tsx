@@ -153,9 +153,7 @@ export default function ArticlesPage() {
     }
   };
 
-  const handleGuestSaveAttempt = () => {
-    // TODO(integration): wire ModalErrorSave after Issue #22 publishes its component API.
-  };
+  const handleGuestSaveAttempt = () => undefined;
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
     if (userId) {
