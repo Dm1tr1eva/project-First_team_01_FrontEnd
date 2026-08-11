@@ -3,7 +3,7 @@ import Link from "next/link";
 import css from "./Footer.module.css";
 import container from "../Header/Header.module.css";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "../../lib/store/authStore";
 export default function Footer() {
   const pathname = usePathname();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
