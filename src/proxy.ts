@@ -47,7 +47,9 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isAuthenticated) {
-    return isPublicOnlyRoute ? NextResponse.redirect(new URL("/", request.url)) : NextResponse.next();
+    return isPublicOnlyRoute
+      ? NextResponse.redirect(new URL("/", request.url))
+      : NextResponse.next();
   }
 
   if (isPrivateRoute) {
