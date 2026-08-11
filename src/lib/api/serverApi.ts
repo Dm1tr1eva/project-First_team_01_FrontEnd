@@ -2,8 +2,7 @@ import { cookies } from "next/headers";
 
 import type { User } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
-import { api } from "@/app/api/api";
-
+import api from "./api";
 async function authHeaders() {
   const cookieStore = await cookies();
   return { Cookie: cookieStore.toString() };
