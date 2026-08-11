@@ -1,12 +1,18 @@
 "use client";
 
-import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ArticleFilter, { type ArticlesFilterValue } from "@/components/ArticleFilter/ArticleFilter";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Pagination from "@/components/Pagination/Pagination";
 import SectionTitle from "@/components/SectionTitle/SectionTitle";
-import { getArticles, getArticlesFiltered, getUserInfo } from "@/lib/api/clientApi";
+import {
+  getArticles,
+  getArticlesFiltered,
+  getSavedArticles,
+  getUserInfo,
+} from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 import type { ArticlesListResponse } from "@/types/article";
 import css from "./page.module.css";
 
@@ -15,6 +21,11 @@ const FALLBACK_ERROR_MESSAGE = "We could not load the articles. Please try again
 
 type ArticlesPageResponse = ArticlesListResponse & {
   authorNames: Record<string, string>;
+};
+
+type SavedArticleIdsOverride = {
+  userId: string;
+  articleIds: string[];
 };
 
 async function fetchArticlesPage(
@@ -46,9 +57,17 @@ async function fetchArticlesPage(
 
 export default function ArticlesPage() {
   const [filter, setFilter] = useState<ArticlesFilterValue>("popular");
-  const [savedArticleIds, setSavedArticleIds] = useState<string[]>([]);
+  const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
+    useState<SavedArticleIdsOverride | null>(null);
   const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
+  const userId = useAuthStore((state) => state.user?.id);
+
+  const { data: savedArticles } = useQuery({
+    queryKey: ["saved-articles", userId],
+    queryFn: getSavedArticles,
+    enabled: Boolean(userId),
+  });
 
   const {
     data,
@@ -79,6 +98,17 @@ export default function ArticlesPage() {
     [data?.pages],
   );
   const totalArticles = data?.pages[0]?.totalItems ?? 0;
+  const savedArticleIds = useMemo(() => {
+    if (!userId) {
+      return [];
+    }
+
+    if (savedArticleIdsOverride?.userId === userId) {
+      return savedArticleIdsOverride.articleIds;
+    }
+
+    return savedArticles?.map((article) => article._id) ?? [];
+  }, [savedArticleIdsOverride, savedArticles, userId]);
 
   useEffect(() => {
     if (!scrollTargetId || !firstNewArticleRef.current) {
@@ -127,6 +157,12 @@ export default function ArticlesPage() {
     // TODO(integration): wire ModalErrorSave after Issue #22 publishes its component API.
   };
 
+  const handleSavedArticlesChange = (articleIds: string[]) => {
+    if (userId) {
+      setSavedArticleIdsOverride({ userId, articleIds });
+    }
+  };
+
   const hasInitialError = isError && articles.length === 0;
   const errorMessage = error instanceof Error ? error.message : FALLBACK_ERROR_MESSAGE;
 
@@ -170,7 +206,7 @@ export default function ArticlesPage() {
               authorNames={authorNames}
               savedArticleIds={savedArticleIds}
               onGuestClick={handleGuestSaveAttempt}
-              onSavedArticlesChange={setSavedArticleIds}
+              onSavedArticlesChange={handleSavedArticlesChange}
               scrollTargetId={scrollTargetId}
               scrollTargetRef={firstNewArticleRef}
             />
