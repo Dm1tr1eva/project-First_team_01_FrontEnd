@@ -1,6 +1,7 @@
 import api from "./browserApi";
 import type { User, AuthUser } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
+import axios from "axios";
 
 // --- auth ---
 
@@ -141,3 +142,20 @@ export async function getCategories(): Promise<Category[]> {
   const { data } = await api.get<Category[]>("/categories");
   return data;
 }
+
+export const getMe = async (): Promise<AuthUser> => {
+  const { data } = await api.get<AuthUser>("/users/me");
+  return data;
+};
+export const checkSession = async (): Promise<boolean> => {
+  try {
+    const { data } = await api.get("/auth/session");
+
+    return data.success === true;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      return false;
+    }
+    throw error;
+  }
+};

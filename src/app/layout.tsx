@@ -6,6 +6,8 @@ import "modern-normalize/modern-normalize.css";
 import "@/styles/reset.css";
 import "@/styles/base.css";
 import "@/styles/container.css";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
+import Footer from "@/components/Footer/Footer";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -31,11 +33,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: Readonly<{
+  children: React.ReactNode;
+
+  modal: React.ReactNode;
+}>) {
   return (
     <html lang="en" className={`${manrope.variable} ${merienda.variable}`}>
       <body>
-        <TanStackProvider>{children}</TanStackProvider>
+        <TanStackProvider>
+          <AuthProvider>
+            <main>
+              {children} {modal}
+            </main>
+            <Footer />
+          </AuthProvider>
+        </TanStackProvider>
       </body>
     </html>
   );
