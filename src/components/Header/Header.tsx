@@ -3,7 +3,7 @@
 import Link from "next/link";
 import css from "./Header.module.css";
 
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "../../lib/store/authStore";
 import { useRouter, usePathname } from "next/navigation";
 
 import { useState } from "react";
