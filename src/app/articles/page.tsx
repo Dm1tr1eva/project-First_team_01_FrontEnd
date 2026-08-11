@@ -13,7 +13,7 @@ import {
   getUserInfo,
 } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
-import type { ArticlesListResponse } from "@/types/article";
+import type { Article, ArticlesListResponse } from "@/types/article";
 import css from "./page.module.css";
 
 const ARTICLES_PER_PAGE = 12;
@@ -28,6 +28,16 @@ type SavedArticleIdsOverride = {
   articleIds: string[];
 };
 
+function getUniqueArticles(pages: ArticlesPageResponse[]): Article[] {
+  const articlesById = new Map<string, Article>();
+
+  pages.forEach((page) => {
+    page.articles.forEach((article) => articlesById.set(article._id, article));
+  });
+
+  return [...articlesById.values()];
+}
+
 async function fetchArticlesPage(
   page: number,
   filter: ArticlesFilterValue,
@@ -37,8 +47,19 @@ async function fetchArticlesPage(
       ? await getArticlesFiltered({ page, perPage: ARTICLES_PER_PAGE, category: "popular" })
       : await getArticles({ page, perPage: ARTICLES_PER_PAGE });
 
-  const ownerIds = [...new Set(response.articles.map((article) => article.ownerId))];
-  const authorEntries = await Promise.all(
+  const embeddedAuthorEntries = response.articles.flatMap((article) =>
+    article.ownerId === null || typeof article.ownerId === "string"
+      ? []
+      : ([[article.ownerId._id, article.ownerId.name]] as const),
+  );
+  const ownerIds = [
+    ...new Set(
+      response.articles.flatMap((article) =>
+        typeof article.ownerId === "string" ? [article.ownerId] : [],
+      ),
+    ),
+  ];
+  const fetchedAuthorEntries = await Promise.all(
     ownerIds.map(async (ownerId) => {
       try {
         const author = await getUserInfo(ownerId);
@@ -51,7 +72,7 @@ async function fetchArticlesPage(
 
   return {
     ...response,
-    authorNames: Object.fromEntries(authorEntries),
+    authorNames: Object.fromEntries([...embeddedAuthorEntries, ...fetchedAuthorEntries]),
   };
 }
 
@@ -88,7 +109,7 @@ export default function ArticlesPage() {
     placeholderData: keepPreviousData,
   });
 
-  const articles = useMemo(() => data?.pages.flatMap((page) => page.articles) ?? [], [data?.pages]);
+  const articles = useMemo(() => getUniqueArticles(data?.pages ?? []), [data?.pages]);
   const authorNames = useMemo(
     () =>
       data?.pages.reduce<Record<string, string>>(
@@ -138,15 +159,15 @@ export default function ArticlesPage() {
       return;
     }
 
-    const previousArticleCount = articles.length;
+    const previousArticleIds = new Set(articles.map((article) => article._id));
     const result = await fetchNextPage();
 
     if (result.isError) {
       return;
     }
 
-    const updatedArticles = result.data?.pages.flatMap((page) => page.articles) ?? [];
-    const firstNewArticle = updatedArticles[previousArticleCount];
+    const updatedArticles = getUniqueArticles(result.data?.pages ?? []);
+    const firstNewArticle = updatedArticles.find((article) => !previousArticleIds.has(article._id));
 
     if (firstNewArticle) {
       setScrollTargetId(firstNewArticle._id);

@@ -28,21 +28,32 @@ export default function ArticlesList({
 
   return (
     <ul className={css.list}>
-      {articles.map((article) => (
-        <li
-          key={article._id}
-          ref={article._id === scrollTargetId ? scrollTargetRef : undefined}
-          className={css.item}
-        >
-          <ArticlesItem
-            article={article}
-            authorName={authorNames[article.ownerId] ?? "Unknown author"}
-            isSaved={savedArticleIds.includes(article._id)}
-            onGuestClick={onGuestClick}
-            onSavedArticlesChange={onSavedArticlesChange}
-          />
-        </li>
-      ))}
+      {articles.map((article) => {
+        const ownerId =
+          typeof article.ownerId === "string" ? article.ownerId : article.ownerId?._id;
+        const embeddedAuthorName =
+          article.ownerId && typeof article.ownerId !== "string" ? article.ownerId.name : undefined;
+
+        return (
+          <li
+            key={article._id}
+            ref={article._id === scrollTargetId ? scrollTargetRef : undefined}
+            className={css.item}
+          >
+            <ArticlesItem
+              article={article}
+              authorName={
+                (ownerId ? authorNames[ownerId] : undefined) ??
+                embeddedAuthorName ??
+                "Unknown author"
+              }
+              isSaved={savedArticleIds.includes(article._id)}
+              onGuestClick={onGuestClick}
+              onSavedArticlesChange={onSavedArticlesChange}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }
