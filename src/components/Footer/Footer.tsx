@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import css from "./Footer.module.css";
+import container from "../Header/Header.module.css";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/store/authStore";
 export default function Footer() {
@@ -12,7 +13,7 @@ export default function Footer() {
   };
   return (
     <footer className={css.footer}>
-      <div className={css.wrap}>
+      <div className={`${css.wrap} ${container.container}`}>
         <Link href="/" className={css.headerLink} aria-label="Home">
           <svg className={css.logoIcon}>
             <use href="/sprite.svg#iconlogo" />
