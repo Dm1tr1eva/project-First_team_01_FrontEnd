@@ -97,11 +97,11 @@ export default function Header() {
                       <div className={css.userFieldFirst}>
                         <img
                           className={css.userAvatar}
-                          src={user?.avatarUrl}
-                          alt={user?.email || "User avatar"}
+                          src={user?.avatarUrl ?? "/default-avatar.png"}
+                          alt={user?.name || "User avatar"}
                         />
 
-                        <p className={css.userName}>{user?.email}</p>
+                        <p className={css.userName}>{user?.name}</p>
                       </div>
                       <Link href={`/logoutuser/`}>
                         <svg width="24" height="24">
@@ -214,11 +214,11 @@ export default function Header() {
                   <div className={css.userFieldFirst}>
                     <img
                       className={css.userAvatar}
-                      src={user?.avatarUrl}
-                      alt={user?.email || "User avatar"}
+                      src={user?.avatarUrl ?? "/default-avatar.png"}
+                      alt={user?.name || "User avatar"}
                     />
 
-                    <p className={css.userName}>{user?.email}</p>
+                    <p className={css.userName}>{user?.name}</p>
                   </div>
 
                   <Link href={`/logoutuser/`}>
