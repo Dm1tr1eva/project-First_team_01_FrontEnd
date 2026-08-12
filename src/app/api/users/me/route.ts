@@ -4,3 +4,7 @@ import { proxyRequest } from "@/lib/api/proxyRequest";
 export async function PATCH(request: NextRequest) {
   return proxyRequest(request, "/users/me");
 }
+
+export async function GET(request: NextRequest) {
+  return proxyRequest(request, "/users/me");
+}

@@ -3,8 +3,10 @@ import { cookies } from "next/headers";
 import { parseSetCookie } from "cookie";
 import { refreshSession } from "@/lib/api/serverApi";
 
-const PRIVATE_ROUTES = ["/profile", "/articles/create"];
-const PUBLIC_ONLY_ROUTES = ["/login", "/register", "/photo"];
+// /photo — крок завантаження аватара ПІСЛЯ реєстрації: бекенд уже ставить сесійні
+// cookie в /auth/register, тобто на цій сторінці юзер завжди авторизований
+const PRIVATE_ROUTES = ["/profile", "/articles/create", "/photo"];
+const PUBLIC_ONLY_ROUTES = ["/login", "/register"];
 
 function applySessionCookies(response: NextResponse, setCookieHeaders: string[]) {
   for (const cookieStr of setCookieHeaders) {
@@ -12,6 +14,20 @@ function applySessionCookies(response: NextResponse, setCookieHeaders: string[])
     if (value === undefined) continue;
     response.cookies.set(name, value, { maxAge, path, httpOnly, secure, sameSite });
   }
+}
+
+// Рендер цього самого запиту (Server Component → serverApi → cookies() з next/headers)
+// інакше й далі бачив би стару сесію, яку бекенд у /auth/refresh уже видалив
+function buildRefreshedCookieHeader(request: NextRequest, setCookieHeaders: string[]) {
+  const cookieMap = new Map<string, string>();
+  for (const { name, value } of request.cookies.getAll()) {
+    cookieMap.set(name, value);
+  }
+  for (const cookieStr of setCookieHeaders) {
+    const { name, value } = parseSetCookie(cookieStr);
+    if (value !== undefined) cookieMap.set(name, value);
+  }
+  return Array.from(cookieMap, ([name, value]) => `${name}=${value}`).join("; ");
 }
 
 export async function proxy(request: NextRequest) {
@@ -35,9 +51,18 @@ export async function proxy(request: NextRequest) {
 
       if (setCookieHeaders) {
         isAuthenticated = true;
-        const response = isPublicOnlyRoute
-          ? NextResponse.redirect(new URL("/", request.url))
-          : NextResponse.next();
+
+        if (isPublicOnlyRoute) {
+          const response = NextResponse.redirect(new URL("/", request.url));
+          applySessionCookies(response, setCookieHeaders);
+          return response;
+        }
+
+        // Не редірект — сторінка рендериться прямо зараз, тож і вхідні заголовки
+        // запиту мають нести вже оновлену сесію, інакше serverApi зловить 401
+        const requestHeaders = new Headers(request.headers);
+        requestHeaders.set("cookie", buildRefreshedCookieHeader(request, setCookieHeaders));
+        const response = NextResponse.next({ request: { headers: requestHeaders } });
         applySessionCookies(response, setCookieHeaders);
         return response;
       }
@@ -47,7 +72,9 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isAuthenticated) {
-    return isPublicOnlyRoute ? NextResponse.redirect(new URL("/", request.url)) : NextResponse.next();
+    return isPublicOnlyRoute
+      ? NextResponse.redirect(new URL("/", request.url))
+      : NextResponse.next();
   }
 
   if (isPrivateRoute) {
