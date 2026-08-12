@@ -5,7 +5,13 @@ import type { Article, ArticlesListResponse, Category } from "@/types/article";
 import api from "./api";
 async function authHeaders() {
   const cookieStore = await cookies();
-  return { Cookie: cookieStore.toString() };
+  // cookieStore.toString() серіалізує ще й атрибути кожної cookie (Path тощо),
+  // а не тільки name=value — бекенд це поки терпить випадково, але краще не покладатись
+  const cookie = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+  return { Cookie: cookie };
 }
 
 // --- users ---
