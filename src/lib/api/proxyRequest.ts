@@ -10,9 +10,9 @@ export async function proxyRequest(request: NextRequest, backendPath: string) {
 
     const targetUrl = new URL(`${BACKEND_URL}/api${backendPath}${request.nextUrl.search}`);
 
+    // Browser → Backend
     const headers = new Headers(request.headers);
 
-    // Cookie браузера → Backend
     const cookie = request.headers.get("cookie");
 
     if (cookie) {
@@ -23,16 +23,23 @@ export async function proxyRequest(request: NextRequest, backendPath: string) {
       method: request.method,
       headers,
       body: request.method !== "GET" && request.method !== "HEAD" ? request.body : undefined,
-      // @ts-expect-error
+      // @ts-expect-error Next.js/TypeScript
       duplex: "half",
     });
 
     const response = await fetch(outgoingRequest);
 
     // Backend → Browser
-    // Передаём Set-Cookie, если backend его отправил
     const responseHeaders = new Headers(response.headers);
 
+    // ВАЖНО:
+    // Next.js fetch может автоматически распаковать gzip/br.
+    // Поэтому нельзя передавать браузеру старые заголовки
+    // сжатого ответа.
+    responseHeaders.delete("content-encoding");
+    responseHeaders.delete("content-length");
+
+    // Передаём cookies от backend браузеру
     const setCookies = response.headers.getSetCookie();
 
     responseHeaders.delete("set-cookie");

@@ -13,27 +13,36 @@ export default function LogoutUserModalClient() {
 
   const handleLogoutUser = async () => {
     try {
+      // 1. Удаляем сессию на backend
       await logout();
+
+      // 2. Сразу меняем состояние клиента
+      clearIsAuthenticated();
+
+      // 3. Полный переход — гарантированно сбрасывает parallel route/modal
+      window.location.href = "/login";
     } catch (error) {
       console.error("Logout error:", error);
-    } finally {
-      clearIsAuthenticated();
-      router.replace("/register");
     }
   };
+
+  const handleClose = () => {
+    router.back();
+  };
+
   return (
-    <LogoutModal onClose={() => router.back()}>
+    <LogoutModal onClose={handleClose}>
       <div className={css.container}>
         <h3 className={css.title}>Are you sure?</h3>
 
         <p className={css.message}>We will miss you!</p>
 
         <div className={css.containerButtons}>
-          <button className={css.buttonLogout} onClick={handleLogoutUser}>
+          <button type="button" className={css.buttonLogout} onClick={handleLogoutUser}>
             Log out
           </button>
 
-          <button className={css.buttonCancel} onClick={() => router.back()}>
+          <button type="button" className={css.buttonCancel} onClick={handleClose}>
             Cancel
           </button>
         </div>

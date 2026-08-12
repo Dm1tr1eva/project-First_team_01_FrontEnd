@@ -3,10 +3,10 @@
 import Link from "next/link";
 import css from "./Header.module.css";
 
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "../../lib/store/authStore";
 import { useRouter, usePathname } from "next/navigation";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const router = useRouter();
@@ -22,6 +22,9 @@ export default function Header() {
   const handleBurger = () => {
     setIsOpen((prev) => !prev);
   };
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
     <>
@@ -100,7 +103,7 @@ export default function Header() {
 
                         <p className={css.userName}>{user?.email}</p>
                       </div>
-                      <Link href={`/logoutUser/`}>
+                      <Link href={`/logoutuser/`}>
                         <svg width="24" height="24">
                           <use href="/sprite.svg#icongenericlogout" />
                         </svg>
@@ -218,7 +221,7 @@ export default function Header() {
                     <p className={css.userName}>{user?.email}</p>
                   </div>
 
-                  <Link href={`/logoutUser/`}>
+                  <Link href={`/logoutuser/`}>
                     <svg width="24" height="24">
                       <use href="/sprite.svg#icongenericlogout" />
                     </svg>
@@ -241,7 +244,7 @@ export default function Header() {
                 <li className={css.navigationItem}>
                   <Link
                     onClick={() => setIsOpen(false)}
-                    href="/"
+                    href="/register"
                     prefetch={false}
                     className={css.navigationLinkJoin}
                   >

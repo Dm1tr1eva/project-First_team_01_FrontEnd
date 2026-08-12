@@ -1,4 +1,3 @@
-//D:\JS\09-auth\app\@modal\default.tsx
-export default function DefaultLogoutUserModal() {
+export default function Default() {
   return null;
 }
