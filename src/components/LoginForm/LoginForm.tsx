@@ -33,7 +33,7 @@ export const LoginForm = () => {
 
             setUser(user);
 
-            router.push("/homeAuthorised");
+            router.push("/profile");
           } catch (error: any) {
             toast.error(
               error.response?.data?.error || error.response?.data?.message || "Login failed",
