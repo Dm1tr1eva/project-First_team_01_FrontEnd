@@ -8,10 +8,7 @@ import "@/styles/base.css";
 import "@/styles/container.css";
 import AuthProvider from "../components/AuthProvider/AuthProvider";
 import Footer from "../components/Footer/Footer";
-<<<<<<< HEAD
-=======
 import Header from "../components/Header/Header";
->>>>>>> main
 
 const manrope = Manrope({
   variable: "--font-manrope",
