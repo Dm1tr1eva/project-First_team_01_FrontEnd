@@ -15,8 +15,8 @@ export default function About() {
           is your space to slow down, reflect, and grow.
         </p>
       </div>
-
-      <div className={css.lotus}>
+<ul className={css.images}>
+      <li className={css.lotus}>
         <Image
           src="/images/about-lotus.jpg"
           alt="Lotus flower"
@@ -24,9 +24,9 @@ export default function About() {
           sizes="(max-width: 767px) 361px, (max-width: 1439px) 249px, 704px"
           className={css.img}
         />
-      </div>
+      </li>
 
-      <div className={css.community}>
+      <li className={css.community}>
         <Image
           src="/images/about-community.jpg"
           alt="People enjoying nature"
@@ -34,9 +34,9 @@ export default function About() {
           sizes="(max-width: 767px) 361px, (max-width: 1439px) 704px, 808px"
           className={css.img}
         />
-      </div>
+      </li>
 
-      <div className={css.meditation}>
+      <li className={css.meditation}>
         <Image
           src="/images/about-meditation.jpg"
           alt="Person meditating"
@@ -44,7 +44,8 @@ export default function About() {
           height={398}
           className={css.img}
         />
-      </div>
+      </li>
+      </ul>
     </section>
   );
 }
