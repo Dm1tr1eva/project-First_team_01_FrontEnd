@@ -5,11 +5,11 @@ import PopularArticles from "@/components/PopularArticles/PopularArticles";
 
 export default function HomePage() {
   return (
-    <main className="container">
+    <div className="container">
       <Hero />
       <About />
       <PopularArticles />
       <Creators />
-    </main>
+    </div>
   );
 }
