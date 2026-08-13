@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Image from 'next/image';
 import css from './About.module.css';
 
