@@ -1,3 +1,6 @@
-export async function POST() {
-  return Response.json({ message: "Not implemented" }, { status: 501 });
+import { NextRequest } from "next/server";
+import { proxyRequest } from "@/lib/api/proxyRequest";
+
+export async function POST(request: NextRequest) {
+  return proxyRequest(request, "/auth/login");
 }

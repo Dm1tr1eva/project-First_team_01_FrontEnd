@@ -1,7 +1,10 @@
-import { ReactNode } from "react";
 import { Metadata } from "next";
 import { Manrope, Merienda } from "next/font/google";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
+import Footer from "@/components/Footer/Footer";
+import Header from "@/components/Header/Header";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import ToastProvider from "@/components/ToastProvider/ToastProvider";
 import "modern-normalize/modern-normalize.css";
 import "@/styles/reset.css";
 import "@/styles/base.css";
@@ -31,11 +34,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: Readonly<{
+  children: React.ReactNode;
+  modal?: React.ReactNode;
+}>) {
   return (
     <html lang="en" className={`${manrope.variable} ${merienda.variable}`}>
       <body>
-        <TanStackProvider>{children}</TanStackProvider>
+        <TanStackProvider>
+          <AuthProvider>
+            <Header />
+            <main>
+              {children} {modal}
+            </main>
+            <Footer />
+          </AuthProvider>
+          <ToastProvider />
+        </TanStackProvider>
       </body>
     </html>
   );
