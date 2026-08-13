@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { addSavedArticle, removeSavedArticle } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -17,6 +18,7 @@ export interface ButtonAddToBookmarksProps {
 }
 
 const FALLBACK_ERROR_MESSAGE = "Unable to update saved articles";
+type ApiErrorResponse = { error?: string; message?: string };
 
 /**
  * @example
@@ -43,7 +45,13 @@ export default function ButtonAddToBookmarks({
       onSavedArticlesChange(savedArticles);
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : FALLBACK_ERROR_MESSAGE);
+      const message = isAxiosError<ApiErrorResponse>(error)
+        ? (error.response?.data.error ?? error.response?.data.message ?? FALLBACK_ERROR_MESSAGE)
+        : error instanceof Error
+          ? error.message
+          : FALLBACK_ERROR_MESSAGE;
+
+      toast.error(message);
     },
   });
 

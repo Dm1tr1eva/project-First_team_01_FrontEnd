@@ -65,28 +65,20 @@ export async function getSavedArticles(): Promise<Article[]> {
 
 export type SavedArticlesMutationResponse = { savedArticles: string[] };
 
-async function updateSavedArticle(
+export async function addSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
+  const { data } = await api.post<SavedArticlesMutationResponse>(
+    `/users/me/saved/${encodeURIComponent(articleId)}`,
+  );
+  return data;
+}
+
+export async function removeSavedArticle(
   articleId: string,
-  method: "POST" | "DELETE",
 ): Promise<SavedArticlesMutationResponse> {
-  const response = await fetch(`/api/users/me/saved/${encodeURIComponent(articleId)}`, { method });
-  const payload = (await response.json()) as SavedArticlesMutationResponse | { message?: string };
-
-  if (!response.ok) {
-    throw new Error(
-      "message" in payload && payload.message ? payload.message : "Unable to update saved articles",
-    );
-  }
-
-  return payload as SavedArticlesMutationResponse;
-}
-
-export function addSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
-  return updateSavedArticle(articleId, "POST");
-}
-
-export function removeSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
-  return updateSavedArticle(articleId, "DELETE");
+  const { data } = await api.delete<SavedArticlesMutationResponse>(
+    `/users/me/saved/${encodeURIComponent(articleId)}`,
+  );
+  return data;
 }
 
 // --- articles ---
