@@ -1,5 +1,5 @@
 "use client";
-
+import { useAuthStore } from "@/lib/store/authStore";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -32,9 +32,12 @@ export const RegisterForm = () => {
         onSubmit={async (values, { setSubmitting }) => {
           try {
             const { repeatPassword, ...registerData } = values;
-            await register(registerData);
 
-            router.push("/add-photo");
+            const user = await register(registerData);
+
+            useAuthStore.getState().setUser(user);
+
+            router.push("/photo");
           } catch (error: any) {
             toast.error(
               error.response?.data?.error || error.response?.data?.message || "Registration failed",
