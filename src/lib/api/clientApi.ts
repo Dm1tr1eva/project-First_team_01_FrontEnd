@@ -1,6 +1,6 @@
 import api from "./browserApi";
 import type { User, AuthUser } from "@/types/user";
-import type { Article, ArticlesListResponse, Category } from "@/types/article";
+import type { Article, ArticlesListResponse, Category, CreateArticleRequest, UpdateArticleRequest } from "@/types/article";
 
 // --- auth ---
 
@@ -97,18 +97,10 @@ export async function getArticleById(id: string): Promise<Article> {
   return data.article;
 }
 
-export type CreateArticleRequest = {
-  title: string;
-  desc: string;
-  article: string;
-  category?: Category;
-  img: File;
-};
 
 export async function createArticle(payload: CreateArticleRequest): Promise<Article> {
   const formData = new FormData();
   formData.append("title", payload.title);
-  formData.append("desc", payload.desc);
   formData.append("article", payload.article);
   if (payload.category) formData.append("category", payload.category);
   formData.append("img", payload.img);
@@ -116,8 +108,6 @@ export async function createArticle(payload: CreateArticleRequest): Promise<Arti
   const { data } = await api.post<{ data: Article }>("/articles", formData);
   return data.data;
 }
-
-export type UpdateArticleRequest = Partial<Omit<CreateArticleRequest, "img">> & { img?: File };
 
 export async function updateArticle(id: string, payload: UpdateArticleRequest): Promise<Article> {
   const formData = new FormData();

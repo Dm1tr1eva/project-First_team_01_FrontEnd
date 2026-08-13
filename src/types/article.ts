@@ -21,3 +21,18 @@ export type ArticlesListResponse = {
   totalPages: number;
   articles: Article[];
 };
+
+export type CreateArticleRequest = {
+  title: string;
+  article: string;
+  img: File;
+  category?: string;
+};
+
+export type UpdateArticleRequest = {
+  title?: string;
+  desc?: string;
+  article?: string;
+  category?: string;
+  img?: File;
+};
