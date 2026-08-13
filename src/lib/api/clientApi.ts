@@ -56,18 +56,28 @@ export async function getUserArticles(
   return data.data;
 }
 
+type SavedArticlesResponse = { savedArticles: Article[] };
+
 export async function getSavedArticles(): Promise<Article[]> {
-  const { data } = await api.get<Article[]>("/users/me/saved");
+  const { data } = await api.get<SavedArticlesResponse>("/users/me/saved");
+  return data.savedArticles;
+}
+
+export type SavedArticlesMutationResponse = { savedArticles: string[] };
+
+export async function addSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
+  const { data } = await api.post<SavedArticlesMutationResponse>(
+    `/users/me/saved/${encodeURIComponent(articleId)}`,
+  );
   return data;
 }
 
-export async function addSavedArticle(articleId: string): Promise<{ savedArticles: string[] }> {
-  const { data } = await api.post<{ savedArticles: string[] }>(`/users/me/saved/${articleId}`);
-  return data;
-}
-
-export async function removeSavedArticle(articleId: string): Promise<{ savedArticles: string[] }> {
-  const { data } = await api.delete<{ savedArticles: string[] }>(`/users/me/saved/${articleId}`);
+export async function removeSavedArticle(
+  articleId: string,
+): Promise<SavedArticlesMutationResponse> {
+  const { data } = await api.delete<SavedArticlesMutationResponse>(
+    `/users/me/saved/${encodeURIComponent(articleId)}`,
+  );
   return data;
 }
 
