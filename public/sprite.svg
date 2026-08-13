@@ -75,7 +75,7 @@
       <path stroke-linejoin="miter" stroke-linecap="round" stroke="currentColor" stroke-miterlimit="4" stroke-width="1" d="M7.5 9.5h17M7.5 21.5h17M7.5 15.5h17"></path>
     </symbol>
     <symbol id="icongenericlogout" viewBox="0 0 32 32">
-      <path stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" stroke-miterlimit="4" stroke-width="1.3333" d="M13.077 6.5h-3.654c-1.614 0-2.923 1.309-2.923 2.923v13.154c0 1.614 1.309 2.923 2.923 2.923h3.654M11.5 16h14.615M21.731 11.615l4.385 4.385-4.385 4.385"></path>
+      <path fill="none" stroke="#374f42" style="stroke: var(--color1, #374f42)" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="1" d="M10.865 1h-5.481c-2.422 0-4.385 1.963-4.385 4.385v19.731c0 2.422 1.963 4.385 4.385 4.385h5.481M8.5 15.25h21.923M23.846 8.673l6.577 6.577-6.577 6.577"></path>
     </symbol>
   </defs>
 </svg>
