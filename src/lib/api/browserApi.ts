@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const client = axios.create({
+const browserApi = axios.create({
   baseURL: "/api",
   withCredentials: true,
 });
 
-export default client;
+export default browserApi;
