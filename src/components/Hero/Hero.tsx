@@ -10,7 +10,7 @@ export default function Hero() {
           <Image 
             src="/images/hero.png" 
             alt="Find your harmony background"
-            fill 
+            fill
             priority 
             className={css.backgroundImage}
           />
