@@ -1,6 +1,6 @@
 import api from "./browserApi";
 
-import type { User, AuthUser, GetMeResponse } from "@/types/user";
+import type { User, AuthUser, GetMeResponse, GetUsers } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
 import axios from "axios";
 
@@ -24,6 +24,12 @@ export async function logout(): Promise<void> {
 }
 
 // --- users ---
+export async function getUsers(
+  params: { page?: number; perPage?: number } = {},
+): Promise<GetUsers> {
+  const { data } = await api.get<GetUsers>("/users", { params });
+  return data;
+}
 
 export async function getUserInfo(id: string): Promise<User> {
   const { data } = await api.get<User>(`/users/${id}`);
