@@ -115,12 +115,12 @@
 
 .recommendationCard {
     width: 100%;
-    min-height: 109px;
     min-width: 0;
+    min-height: 109px;
 
     display: flex;
     align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 16px;
 
     padding: 16px;
@@ -194,23 +194,8 @@
     height: 16px;
 }
 
-/* Mobile design: 375px–767px */
-@media screen and (min-width: 375px) and (max-width: 767px) {
-    .recommendationCard {
-        width: 329px;
-        height: 109px;
-        min-height: 109px;
-        gap: 56px;
-    }
-
-    .recommendationContent {
-        width: 201px;
-        flex: 0 0 201px;
-    }
-}
-
-/* Tablet: 768px–1439px */
-@media screen and (min-width: 768px) and (max-width: 1439px) {
+/* Tablet: 768px+ */
+@media screen and (min-width: 768px) {
     .page {
         max-width: var(--container-width-tablet);
         padding: 32px var(--container-padding-tablet);
@@ -249,10 +234,7 @@
 
     .recommendationCard {
         width: 100%;
-        height: 105px;
         min-height: 105px;
-
-        justify-content: space-between;
         gap: 16px;
     }
 
@@ -303,23 +285,7 @@
     }
 
     .recommendationCard {
-        width: 329px;
-        height: 109px;
-        min-height: 109px;
-        gap: 56px;
-    }
-
-    .recommendationContent {
-        width: 201px;
-        flex: 0 0 201px;
-    }
-}
-
-/* Fluid mobile: 320px–374px */
-@media screen and (max-width: 374px) {
-    .recommendationCard {
         width: 100%;
-        height: auto;
         min-height: 109px;
         gap: 16px;
     }
