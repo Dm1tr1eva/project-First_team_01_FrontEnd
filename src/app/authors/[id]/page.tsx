@@ -1,3 +1,76 @@
-export default function AuthorPage() {
-  return <div>AuthorPage</div>;
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
+
+import { getUserInfo, getUserArticles } from "@/lib/api/serverApi";
+import getQueryClient from "@/lib/api/getQueryClient";
+import AuthorInfo from "@/components/AuthorInfo/AuthorInfo";
+import AuthorArticlesSection from "./AuthorArticlesSection";
+import css from "./page.module.css";
+
+const ARTICLES_PER_PAGE = 12;
+
+type AuthorPageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+async function getUserOrNotFound(id: string) {
+  try {
+    return await getUserInfo(id);
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) {
+      notFound();
+    }
+    throw error;
+  }
+}
+
+export async function generateMetadata({ params }: AuthorPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const user = await getUserOrNotFound(id);
+
+  const title = `${user.name} — Harmoniq`;
+  const description = `${user.name}'s public profile on Harmoniq: ${user.articlesAmount} published articles.`;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+  };
+}
+
+export default async function AuthorPage({ params }: AuthorPageProps) {
+  const { id } = await params;
+
+  const user = await getUserOrNotFound(id);
+
+  const queryClient = getQueryClient();
+
+  // Якщо prefetch не вдався (наприклад, бекенд тимчасово недоступний), не валимо
+  // всю сторінку: клієнтський useInfiniteQuery в AuthorArticlesSection повторить
+  // запит сам і покаже toast з помилкою.
+  try {
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: ["authorArticles", id],
+      queryFn: () => getUserArticles(id, { page: 1, perPage: ARTICLES_PER_PAGE }),
+      initialPageParam: 1,
+    });
+  } catch {
+    // ігноруємо навмисно
+  }
+
+  return (
+    <div className={css.page}>
+      <div className="container">
+        <AuthorInfo user={user} />
+
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <AuthorArticlesSection authorId={id} authorName={user.name} />
+        </HydrationBoundary>
+      </div>
+    </div>
+  );
 }
