@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import { Manrope, Merienda } from "next/font/google";
 import AuthProvider from "@/components/AuthProvider/AuthProvider";
-import Footer from "@/components/Footer/Footer";
-import Header from "@/components/Header/Header";
+import Layout from "@/components/Layout/Layout";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import ToastProvider from "@/components/ToastProvider/ToastProvider";
 import "modern-normalize/modern-normalize.css";
@@ -46,11 +45,9 @@ export default function RootLayout({
       <body>
         <TanStackProvider>
           <AuthProvider>
-            <Header />
-            <main>
+            <Layout>
               {children} {modal}
-            </main>
-            <Footer />
+            </Layout>
           </AuthProvider>
           <ToastProvider />
         </TanStackProvider>
