@@ -13,6 +13,9 @@ export const registerSchema = Yup.object({
     .min(8, "Password must be at least 8 characters")
     .max(64, "Password must be at most 64 characters")
     .required("Password is required"),
+  repeatPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Repeat password"),
 });
 
 export const loginSchema = Yup.object({

@@ -1,5 +1,14 @@
 export type Category = "popular" | "general";
 
+export type ArticleOwner =
+  | string
+  | null
+  | {
+      _id: string;
+      name: string;
+      avatarUrl?: string;
+    };
+
 export type Article = {
   _id: string;
   title: string;
@@ -9,7 +18,7 @@ export type Article = {
   rate: number;
   date: string;
   category: Category;
-  ownerId: string;
+  ownerId: ArticleOwner;
   createdAt: string;
   updatedAt: string;
 };
