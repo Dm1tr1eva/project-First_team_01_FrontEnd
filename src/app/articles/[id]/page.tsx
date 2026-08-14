@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import Link from "next/link";
 
 import {
@@ -6,6 +7,7 @@ import {
   getUserInfo,
 } from "@/lib/api/serverApi";
 
+import ArticleSaveButton from "./ArticleSaveButton";
 import styles from "./page.module.css";
 
 type ArticlePageProps = {
@@ -30,10 +32,29 @@ function formatDate(date: string) {
   return `${day}.${month}.${year}`;
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+function getRandomItems<T>(items: T[], count: number): T[] {
+  const copy = [...items];
+
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const randomIndex = randomInt(i + 1);
+
+    [copy[i], copy[randomIndex]] = [
+      copy[randomIndex],
+      copy[i],
+    ];
+  }
+
+  return copy.slice(0, count);
+}
+
+export default async function ArticlePage({
+  params,
+}: ArticlePageProps) {
   const { id } = await params;
 
-  const article = await getArticleById(id);
+  const article = await getArticleById(id); 
+
+  console.log("ARTICLE TEXT:", JSON.stringify(article.article));
 
   const owner = article.ownerId as string | ArticleOwner | null;
 
@@ -54,9 +75,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     perPage: 20,
   });
 
-  const recommendationArticles = articlesResponse.articles
-    .filter((item) => item._id !== article._id)
-    .slice(0, 3);
+const availableRecommendations = articlesResponse.articles.filter(
+  (item) => item._id !== article._id,
+);
+
+const recommendationArticles = getRandomItems(
+  availableRecommendations,
+  3,
+);
 
   const recommendations = await Promise.all(
     recommendationArticles.map(async (item) => {
@@ -69,7 +95,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
       if (typeof recommendationOwner === "string") {
         try {
-          recommendationAuthor = await getUserInfo(recommendationOwner);
+          recommendationAuthor =
+            await getUserInfo(recommendationOwner);
         } catch {
           recommendationAuthor = null;
         }
@@ -84,10 +111,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     }),
   );
 
-  const paragraphs = article.article
-    .split(/(?:\/n|\\n|\n)/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
+      const paragraphs = article.article
+        .split(/\/n|\n+/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean);
 
   return (
     <main className={styles.page}>
@@ -137,40 +164,48 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </h2>
 
             <div className={styles.recommendations}>
-              {recommendations.map(({ article: item, author: itemAuthor }) => (
-                <article
-                  key={item._id}
-                  className={styles.recommendationCard}
-                >
-                  <div className={styles.recommendationContent}>
-                    <h3 className={styles.recommendationTitle}>
-                      {item.title}
-                    </h3>
-
-                    <p className={styles.recommendationAuthor}>
-                      {itemAuthor?.name ?? "Unknown author"}
-                    </p>
-                  </div>
-
-                  <Link
-                    href={`/articles/${item._id}`}
-                    className={styles.arrowButton}
-                    aria-label={`Open article ${item.title}`}
+              {recommendations.map(
+                ({ article: item, author: itemAuthor }) => (
+                  <article
+                    key={item._id}
+                    className={styles.recommendationCard}
                   >
-                    ↗
-                  </Link>
-                </article>
-              ))}
+                    <div
+                      className={styles.recommendationContent}
+                    >
+                      <h3
+                        className={styles.recommendationTitle}
+                      >
+                        {item.title}
+                      </h3>
+
+                      <p
+                        className={styles.recommendationAuthor}
+                      >
+                        {itemAuthor?.name ?? "Unknown author"}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/articles/${item._id}`}
+                      className={styles.arrowButton}
+                      aria-label={`Open article ${item.title}`}
+                    >
+                      <svg
+                        className={styles.arrowIcon}
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                         <use href="/sprite.svg#icon-Genericarrow-up-right-small" />
+                      </svg>
+                    </Link>
+                  </article>
+                ),
+              )}
             </div>
           </div>
 
-          <button
-            type="button"
-            className={styles.saveButton}
-          >
-            <span>Save</span>
-            <span aria-hidden="true">♡</span>
-          </button>
+          <ArticleSaveButton articleId={article._id} />
         </aside>
       </div>
     </main>
