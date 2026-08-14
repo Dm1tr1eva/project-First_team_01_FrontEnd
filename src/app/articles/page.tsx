@@ -3,6 +3,7 @@
 import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ArticleFilter, { type ArticlesFilterValue } from "@/components/ArticleFilter/ArticleFilter";
+import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Pagination from "@/components/Pagination/Pagination";
 import SectionTitle from "@/components/SectionTitle/SectionTitle";
@@ -220,27 +221,33 @@ export default function ArticlesPage() {
 
         {!isPending && !hasInitialError && (
           <>
-            <ArticlesList
-              articles={articles}
-              authorNames={authorNames}
-              savedArticleIds={savedArticleIds}
-              onGuestClick={handleGuestSaveAttempt}
-              onSavedArticlesChange={handleSavedArticlesChange}
-              scrollTargetId={scrollTargetId}
-              scrollTargetRef={firstNewArticleRef}
-            />
+            {articles.length === 0 ? (
+              <ArticlesEmptyState />
+            ) : (
+              <>
+                <ArticlesList
+                  articles={articles}
+                  authorNames={authorNames}
+                  savedArticleIds={savedArticleIds}
+                  onGuestClick={handleGuestSaveAttempt}
+                  onSavedArticlesChange={handleSavedArticlesChange}
+                  scrollTargetId={scrollTargetId}
+                  scrollTargetRef={firstNewArticleRef}
+                />
+
+                <Pagination
+                  hasMore={!isPlaceholderData && Boolean(hasNextPage)}
+                  isLoading={isFetchingNextPage}
+                  onLoadMore={handleLoadMore}
+                />
+              </>
+            )}
 
             {isError && articles.length > 0 && (
               <p className={css.error} role="alert">
                 {errorMessage}
               </p>
             )}
-
-            <Pagination
-              hasMore={!isPlaceholderData && Boolean(hasNextPage)}
-              isLoading={isFetchingNextPage}
-              onLoadMore={handleLoadMore}
-            />
           </>
         )}
 

@@ -57,6 +57,9 @@
     <symbol id="icon-Genericsearch" viewBox="0 0 32 32">
       <path stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-width="1.333" d="m25 25-4.413-4.405m0 0A7.962 7.962 0 1 0 9.333 9.329a7.962 7.962 0 0 0 11.255 11.265z"/>
     </symbol>
+    <symbol id="icon-Genericalert-circle" viewBox="0 0 40 40">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M20 28.4444V30.5556M20 9.44444V22.1111M39 20C39 30.4934 30.4934 39 20 39C9.50659 39 1 30.4934 1 20C1 9.50659 9.50659 1 20 1C30.4934 1 39 9.50659 39 20Z"/>
+    </symbol>
     <symbol id="icon-Genericshare-ios-big" viewBox="0 0 32 32">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="1.333" d="M15.999 19.5V2m4.716 4.2L15.999 2l-4.716 4.2m.236 3.967H7.466a2.667 2.667 0 0 0-2.667 2.667v14.5a2.667 2.667 0 0 0 2.667 2.667h17.067a2.667 2.667 0 0 0 2.667-2.667v-14.5a2.667 2.667 0 0 0-2.667-2.667H20.48"/>
     </symbol>
