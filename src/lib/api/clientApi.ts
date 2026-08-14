@@ -1,6 +1,8 @@
 import api from "./browserApi";
-import type { User, AuthUser } from "@/types/user";
+
+import type { User, AuthUser, GetMeResponse } from "@/types/user";
 import type { Article, ArticlesListResponse, Category } from "@/types/article";
+import axios from "axios";
 
 // --- auth ---
 
@@ -69,18 +71,28 @@ export async function getUserArticles(
   return data.data;
 }
 
+type SavedArticlesResponse = { savedArticles: Article[] };
+
 export async function getSavedArticles(): Promise<Article[]> {
-  const { data } = await api.get<Article[]>("/users/me/saved");
+  const { data } = await api.get<SavedArticlesResponse>("/users/me/saved");
+  return data.savedArticles;
+}
+
+export type SavedArticlesMutationResponse = { savedArticles: string[] };
+
+export async function addSavedArticle(articleId: string): Promise<SavedArticlesMutationResponse> {
+  const { data } = await api.post<SavedArticlesMutationResponse>(
+    `/users/me/saved/${encodeURIComponent(articleId)}`,
+  );
   return data;
 }
 
-export async function addSavedArticle(articleId: string): Promise<{ savedArticles: string[] }> {
-  const { data } = await api.post<{ savedArticles: string[] }>(`/users/me/saved/${articleId}`);
-  return data;
-}
-
-export async function removeSavedArticle(articleId: string): Promise<{ savedArticles: string[] }> {
-  const { data } = await api.delete<{ savedArticles: string[] }>(`/users/me/saved/${articleId}`);
+export async function removeSavedArticle(
+  articleId: string,
+): Promise<SavedArticlesMutationResponse> {
+  const { data } = await api.delete<SavedArticlesMutationResponse>(
+    `/users/me/saved/${encodeURIComponent(articleId)}`,
+  );
   return data;
 }
 
@@ -156,3 +168,18 @@ export async function getCategories(): Promise<Category[]> {
   const { data } = await api.get<Category[]>("/categories");
   return data;
 }
+//------------------------------------------------------------------------------
+export const getMe = async (): Promise<AuthUser> => {
+  const { data } = await api.get<GetMeResponse>("/users/me");
+
+  return data.data.user;
+};
+export const checkSession = async (): Promise<boolean> => {
+  try {
+    const { data } = await api.get("/auth/session");
+
+    return data.success === true;
+  } catch {
+    return false;
+  }
+};
