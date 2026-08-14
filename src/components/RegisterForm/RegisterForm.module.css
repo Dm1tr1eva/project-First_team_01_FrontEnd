@@ -1,7 +1,12 @@
+.content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 .container {
-  width: 393px;
-  padding: 48px 32px;
-  box-sizing: border-box;
+  width: 360px;
+  padding: 41px 32px;
+
   display: flex;
   flex-direction: column;
 }
@@ -152,13 +157,26 @@
 }
 
 @media (min-width: 768px) {
+  .content {
+    padding: 120px 0px 120px 0px;
+  }
   .container {
     width: 522px;
-    min-height: 632px;
+    min-height: 618px;
     height: auto;
 
     border-radius: 32px;
     background: #d1e0d8;
     margin: 0 auto;
+  }
+}
+
+@media (min-width: 1440px) {
+  .content {
+    padding: 50px 0px 50px 0px;
+  }
+
+  .container {
+    width: 392px;
   }
 }
