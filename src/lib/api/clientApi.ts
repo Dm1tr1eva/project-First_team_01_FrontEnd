@@ -40,6 +40,21 @@ export async function updateAvatar(file: File): Promise<{ avatarUrl: string }> {
   return data;
 }
 
+export type GetUsersResponse = {
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  users: User[];
+};
+
+export async function getUsers(
+  params: { page?: number; perPage?: number } = {},
+): Promise<GetUsersResponse> {
+  const { data } = await api.get<GetUsersResponse>("/users", { params });
+  return data;
+}
+
 type UserArticlesResponse = {
   status: number;
   message: string;
