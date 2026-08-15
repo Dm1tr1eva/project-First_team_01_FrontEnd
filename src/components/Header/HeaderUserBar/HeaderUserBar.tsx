@@ -13,7 +13,7 @@ export default function HeaderUserBar({ user, className }: UserBarProps) {
   return (
     <li className={css[className]}>
       <div className={css.userFieldFirst}>
-        <Link href={`/edit-avatar/`} title="Change avatar">
+        <div>
           <Image
             className={css.userAvatar}
             src={user?.avatarUrl || "/default-avatar.png"}
@@ -21,7 +21,7 @@ export default function HeaderUserBar({ user, className }: UserBarProps) {
             height={40}
             alt={user?.name || "User avatar"}
           />
-        </Link>
+        </div>
 
         <p className={css.userName}>{user?.name}</p>
       </div>
