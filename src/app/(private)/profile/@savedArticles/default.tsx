@@ -6,7 +6,6 @@ import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
-import ButtonAddToBookmarks from "@/components/ButtonAddToBookmarks/ButtonAddToBookmarks";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserInfo } from "@/lib/api/clientApi";
@@ -25,9 +24,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-// GET /users/me/saved не приймає page/perPage (на відміну від /users/:id/articles) —
-// бекенд віддає весь список одразу. Тому пагінуємо на клієнті: тягнемо все один раз,
-// а Load More просто розкриває наступні 12 елементів з уже завантаженого масиву.
 async function fetchSavedArticlesWithAuthors(): Promise<{
   articles: Article[];
   authorNames: Record<string, string>;
@@ -158,19 +154,6 @@ export default function SavedArticlesTab() {
         onSavedArticlesChange={handleSavedArticlesChange}
         scrollTargetId={scrollTargetId}
         scrollTargetRef={firstNewArticleRef}
-        renderAction={(article) => (
-          // Усі статті в цьому табі за визначенням вже збережені, тож
-          // isSaved завжди true — клік на цій кнопці лише прибирає із
-          // закладок. variant="wide" показує явний текстовий лейбл
-          // ("Unsave"), а не просто іконку, як у дефолтній icon-версії.
-          <ButtonAddToBookmarks
-            articleId={article._id}
-            isSaved
-            variant="wide"
-            onGuestClick={handleGuestSaveAttempt}
-            onSavedArticlesChange={handleSavedArticlesChange}
-          />
-        )}
       />
 
       <Pagination hasMore={hasMore} isLoading={false} onLoadMore={handleLoadMore} />
