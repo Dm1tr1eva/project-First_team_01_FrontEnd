@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import AuthorInfo from "@/components/AuthorInfo/AuthorInfo";
+import EditNicknameButton from "./EditNicknameButton";
 import getQueryClient from "@/lib/api/getQueryClient";
 import { getUserArticles, getUserInfo } from "@/lib/api/serverApi";
 import { getCurrentUserServer } from "./getCurrentUserServer";
@@ -41,6 +42,13 @@ export default async function ProfileLayout({
 
   const queryClient = getQueryClient();
 
+  // Гідруємо кеш під ключем ["me"] уже нормалізованим currentUser (без
+  // додаткового запиту на бекенд — дані вже маємо). Клієнтські таби читають
+  // саме цей ключ (useCurrentUserId → useCurrentUser) замість Zustand-стору,
+  // який заповнюється асинхронно і був причиною вічного спінера (детальніше
+  // в коментарі useCurrentUserId.ts).
+  queryClient.setQueryData(["me"], currentUser);
+
   try {
     await queryClient.prefetchInfiniteQuery({
       queryKey: ["myArticles", currentUser.id],
@@ -54,7 +62,10 @@ export default async function ProfileLayout({
   return (
     <div className={css.page}>
       <div className="container">
-        <AuthorInfo user={profile} />
+        <div className={css.authorRow}>
+          <AuthorInfo user={profile} />
+          <EditNicknameButton />
+        </div>
 
         <HydrationBoundary state={dehydrate(queryClient)}>
           <ProfileTabsClient myArticles={myArticles} savedArticles={savedArticles}>

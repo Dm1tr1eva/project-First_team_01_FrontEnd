@@ -6,6 +6,7 @@ import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
+import ButtonAddToBookmarks from "@/components/ButtonAddToBookmarks/ButtonAddToBookmarks";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserInfo } from "@/lib/api/clientApi";
@@ -157,6 +158,19 @@ export default function SavedArticlesTab() {
         onSavedArticlesChange={handleSavedArticlesChange}
         scrollTargetId={scrollTargetId}
         scrollTargetRef={firstNewArticleRef}
+        renderAction={(article) => (
+          // Усі статті в цьому табі за визначенням вже збережені, тож
+          // isSaved завжди true — клік на цій кнопці лише прибирає із
+          // закладок. variant="wide" показує явний текстовий лейбл
+          // ("Unsave"), а не просто іконку, як у дефолтній icon-версії.
+          <ButtonAddToBookmarks
+            articleId={article._id}
+            isSaved
+            variant="wide"
+            onGuestClick={handleGuestSaveAttempt}
+            onSavedArticlesChange={handleSavedArticlesChange}
+          />
+        )}
       />
 
       <Pagination hasMore={hasMore} isLoading={false} onLoadMore={handleLoadMore} />

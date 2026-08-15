@@ -6,12 +6,12 @@ import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
+import EditArticleButton from "@/components/EditArticleButton/EditArticleButton";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
-import { useAuthStore } from "@/lib/store/authStore";
 import type { Article } from "@/types/article";
-import { useCurrentUserId } from "../useCurrentUserId";
+import { useCurrentUser } from "../useCurrentUserId";
 import css from "./default.module.css";
 
 const ARTICLES_PER_PAGE = 12;
@@ -39,8 +39,8 @@ function getUniqueArticles(pages: { articles: Article[] }[]): Article[] {
 }
 
 export default function MyArticlesTab() {
-  const currentUser = useAuthStore((state) => state.user);
-  const currentUserId = useCurrentUserId();
+  const { data: currentUser } = useCurrentUser();
+  const currentUserId = currentUser?.id;
 
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
@@ -111,6 +111,17 @@ export default function MyArticlesTab() {
     toast.error("Please log in to save articles");
   };
 
+  // На "My Articles" замінюємо стандартну bookmark-кнопку на EditArticleButton —
+  // юзер не має "зберігати в закладки" власні статті, натомість редагує їх.
+  // Заглушка: сторінки/форми редагування статті ще не існує в жодній гілці
+  // (не наша зона відповідальності і не входить у поточний фідбек тімліда
+  // по /profile), тож onClick поки що просто повідомляє про майбутню фічу,
+  // а не веде на неперевірений/неіснуючий маршрут. Замінити на router.push
+  // до реального шляху, коли сторінка редагування буде готова й змержена.
+  const handleEdit = () => {
+    toast("Editing articles is coming soon");
+  };
+
   const handleSavedArticlesChange = (articleIds: string[]) => {
     if (currentUserId) {
       setSavedArticleIdsOverride({ userId: currentUserId, articleIds });
@@ -150,6 +161,12 @@ export default function MyArticlesTab() {
         onSavedArticlesChange={handleSavedArticlesChange}
         scrollTargetId={scrollTargetId}
         scrollTargetRef={firstNewArticleRef}
+        renderAction={(article) => (
+          <EditArticleButton
+            articleTitle={article.title}
+            onClick={handleEdit}
+          />
+        )}
       />
 
       <Pagination

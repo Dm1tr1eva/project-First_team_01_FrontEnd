@@ -37,3 +37,8 @@
   color: var(--color-text);
   border-bottom-color: #649179;
 }
+
+.authorRow {
+  display: flex;
+  align-items: center;
+}
