@@ -9,7 +9,7 @@ import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserInfo } from "@/lib/api/clientApi";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useCurrentUserId } from "../useCurrentUserId";
 import type { Article } from "@/types/article";
 import css from "./default.module.css";
 
@@ -61,7 +61,7 @@ async function fetchSavedArticlesWithAuthors(): Promise<{
 }
 
 export default function SavedArticlesTab() {
-  const currentUserId = useAuthStore((state) => state.user?.id);
+  const currentUserId = useCurrentUserId();
 
   const [visibleCount, setVisibleCount] = useState(ARTICLES_PER_PAGE);
   const [removedArticleIds, setRemovedArticleIds] = useState<Set<string>>(new Set());

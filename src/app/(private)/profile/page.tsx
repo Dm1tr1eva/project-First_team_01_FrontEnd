@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 // Весь UI сторінки (шапка, таби, слоти) рендерить layout.tsx — тут лише
-// метадані для маршруту /profile
+// метадані для маршруту /profile, як того вимагає базове ТЗ.
 export default function ProfilePage() {
   return null;
 }

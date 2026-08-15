@@ -1,15 +1,15 @@
-"use client";
-
-import { useEffect, useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
+import type { ReactNode } from "react";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import AuthorInfo from "@/components/AuthorInfo/AuthorInfo";
-import { getUserInfo } from "@/lib/api/clientApi";
-import { useAuthStore } from "@/lib/store/authStore";
+import getQueryClient from "@/lib/api/getQueryClient";
+import { getUserArticles, getUserInfo } from "@/lib/api/serverApi";
+import { getCurrentUserServer } from "./getCurrentUserServer";
+import ProfileTabsClient from "./ProfileTabsClient";
 import css from "./layout.module.css";
 
-type ProfileTab = "myArticles" | "savedArticles";
+const ARTICLES_PER_PAGE = 12;
 
 type ProfileLayoutProps = {
   children: ReactNode;
@@ -17,87 +17,50 @@ type ProfileLayoutProps = {
   savedArticles: ReactNode;
 };
 
-// Наша частина по ТЗ ProfilePage: шапка (AuthorInfo — перевикористана з AuthorPage,
-// той самий User: name/avatarUrl/articlesAmount), перемикач табів My Articles /
-// Saved Articles та власне перемикання паралельних слотів @myArticles/@savedArticles.
-// Кожен слот — окремий незалежний "маршрут" зі своїм станом пагінації: перемикання
-// табу розмонтовує неактивний слот, тож при поверненні на нього пагінація завжди
-// починається з першої сторінки (узгоджено окремо).
+// Наша частина по ТЗ ProfilePage: шапка (AuthorInfo, перевикористана з
+// AuthorPage), захист від гостей і prefetch дефолтного табу (My Articles),
+// щоб не порушувати вимогу базового ТЗ про prefetch для пагінованих списків.
 //
-// Примітка: (private)/layout.tsx (спільний, не наш) поки що нічого не захищає від
-// гостей, тож ми додали власну перевірку тут — на рівні саме цієї сторінки.
-export default function ProfileLayout({ children, myArticles, savedArticles }: ProfileLayoutProps) {
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState<ProfileTab>("myArticles");
+// Захист від гостей зроблений на сервері (redirect() до рендеру), а не через
+// клієнтський useAuthStore — це надійніше: не залежить від того, чи встиг
+// persist-стан Zustand синхронізуватись, і коректно спрацьовує навіть якщо
+// сесія протухла між заходами (на відміну від застарілого isAuthenticated
+// у сторі, з яким ми стикались раніше).
+export default async function ProfileLayout({
+  children,
+  myArticles,
+  savedArticles,
+}: ProfileLayoutProps) {
+  const currentUser = await getCurrentUserServer();
 
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const currentUser = useAuthStore((state) => state.user);
+  if (!currentUser) {
+    redirect("/login");
+  }
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated, router]);
+  const profile = await getUserInfo(currentUser.id);
 
-  const { data: profile } = useQuery({
-    queryKey: ["userInfo", currentUser?.id],
-    queryFn: () => getUserInfo(currentUser!.id),
-    enabled: Boolean(currentUser?.id),
-  });
+  const queryClient = getQueryClient();
 
-  if (!isAuthenticated || !currentUser) {
-    return null;
+  try {
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: ["myArticles", currentUser.id],
+      queryFn: () => getUserArticles(currentUser.id, { page: 1, perPage: ARTICLES_PER_PAGE }),
+      initialPageParam: 1,
+    });
+  } catch {
+    // ігноруємо навмисно: клієнтський useInfiniteQuery в @myArticles повторить запит сам
   }
 
   return (
     <div className={css.page}>
       <div className="container">
-        {profile && <AuthorInfo user={profile} />}
+        <AuthorInfo user={profile} />
 
-        <div className={css.tabs} role="tablist" aria-label="Profile articles">
-          <button
-            type="button"
-            role="tab"
-            id="tab-myArticles"
-            aria-selected={activeTab === "myArticles"}
-            aria-controls="tabpanel-myArticles"
-            className={`${css.tab} ${activeTab === "myArticles" ? css.tabActive : ""}`}
-            onClick={() => setActiveTab("myArticles")}
-          >
-            My Articles
-          </button>
-          <button
-            type="button"
-            role="tab"
-            id="tab-savedArticles"
-            aria-selected={activeTab === "savedArticles"}
-            aria-controls="tabpanel-savedArticles"
-            className={`${css.tab} ${activeTab === "savedArticles" ? css.tabActive : ""}`}
-            onClick={() => setActiveTab("savedArticles")}
-          >
-            Saved Articles
-          </button>
-        </div>
-
-        <div
-          id="tabpanel-myArticles"
-          role="tabpanel"
-          aria-labelledby="tab-myArticles"
-          hidden={activeTab !== "myArticles"}
-        >
-          {activeTab === "myArticles" && myArticles}
-        </div>
-
-        <div
-          id="tabpanel-savedArticles"
-          role="tabpanel"
-          aria-labelledby="tab-savedArticles"
-          hidden={activeTab !== "savedArticles"}
-        >
-          {activeTab === "savedArticles" && savedArticles}
-        </div>
-
-        {children}
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <ProfileTabsClient myArticles={myArticles} savedArticles={savedArticles}>
+            {children}
+          </ProfileTabsClient>
+        </HydrationBoundary>
       </div>
     </div>
   );

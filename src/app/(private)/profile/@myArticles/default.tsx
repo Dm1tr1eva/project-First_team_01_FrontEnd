@@ -11,6 +11,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import type { Article } from "@/types/article";
+import { useCurrentUserId } from "../useCurrentUserId";
 import css from "./default.module.css";
 
 const ARTICLES_PER_PAGE = 12;
@@ -39,7 +40,7 @@ function getUniqueArticles(pages: { articles: Article[] }[]): Article[] {
 
 export default function MyArticlesTab() {
   const currentUser = useAuthStore((state) => state.user);
-  const currentUserId = currentUser?.id;
+  const currentUserId = useCurrentUserId();
 
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
@@ -64,8 +65,8 @@ export default function MyArticlesTab() {
 
   const articles = useMemo(() => getUniqueArticles(data?.pages ?? []), [data?.pages]);
   const authorNames = useMemo(
-    () => (currentUser ? { [currentUser.id]: currentUser.name } : {}),
-    [currentUser],
+    () => (currentUser && currentUserId ? { [currentUserId]: currentUser.name } : {}),
+    [currentUser, currentUserId],
   );
 
   const savedArticleIds = useMemo(() => {
