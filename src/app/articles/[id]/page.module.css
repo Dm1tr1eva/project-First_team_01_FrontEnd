@@ -273,20 +273,29 @@
         flex-shrink: 0;
         color: #000000;
     }
+    
+.sidebarWrapper {
+    width: 393px;
+    flex-shrink: 0;
 
-    .sidebarWrapper {
-        width: 393px;
-        flex-shrink: 0;
+    position: sticky;
+    top: calc(46px + 2rem + 24px);
+    align-self: flex-start;
 
-        position: sticky;
-        top: 24px;
-        align-self: flex-start;
-    }
+    max-height: calc(100vh - (46px + 2rem + 48px));
+    overflow-y: auto;
 
-    .sidebar {
-        width: 393px;
-        padding: 32px 32px 40px;
-    }
+    scrollbar-width: none;
+}
+
+.sidebarWrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar {
+    width: 393px;
+    padding: 32px 32px 40px;
+}
 
     .recommendationCard {
         width: 100%;
