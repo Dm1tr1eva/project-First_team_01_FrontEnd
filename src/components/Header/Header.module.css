@@ -49,6 +49,10 @@
   display: flex;
   align-items: center;
 }
+.navigationItemCriate {
+  display: flex;
+  align-items: center;
+}
 .navigationItemDesc {
   display: none;
   align-items: center;
@@ -225,6 +229,9 @@
   }
   .navigationDescFild {
     gap: 17.5px;
+  }
+  .navigationItemCriate {
+    display: none;
   }
 }
 

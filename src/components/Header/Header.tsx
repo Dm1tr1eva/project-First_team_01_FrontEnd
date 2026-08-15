@@ -157,7 +157,7 @@ export default function Header() {
                   </Link>
                 </li>
 
-                <li className={css.navigationItem}>
+                <li className={css.navigationItemCriate}>
                   <Link
                     title="Create an article page"
                     onClick={() => setIsOpen(false)}
