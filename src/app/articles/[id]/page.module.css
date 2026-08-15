@@ -277,6 +277,10 @@
     .sidebarWrapper {
         width: 393px;
         flex-shrink: 0;
+
+        position: sticky;
+        top: 24px;
+        align-self: flex-start;
     }
 
     .sidebar {

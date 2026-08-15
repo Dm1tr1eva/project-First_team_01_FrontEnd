@@ -7,6 +7,8 @@ import {
   getUserInfo,
 } from "@/lib/api/serverApi";
 
+import type { Article } from "@/types/article";
+
 import ArticleSaveButton from "./ArticleSaveButton";
 import styles from "./page.module.css";
 
@@ -20,6 +22,11 @@ type ArticleOwner = {
   _id: string;
   name: string;
   avatarUrl: string | null;
+};
+
+type Recommendation = {
+  article: Article;
+  author: ArticleOwner | null;
 };
 
 function formatDate(date: string) {
@@ -52,9 +59,7 @@ export default async function ArticlePage({
 }: ArticlePageProps) {
   const { id } = await params;
 
-  const article = await getArticleById(id); 
-
-  console.log("ARTICLE TEXT:", JSON.stringify(article.article));
+  const article = await getArticleById(id);
 
   const owner = article.ownerId as string | ArticleOwner | null;
 
@@ -70,51 +75,58 @@ export default async function ArticlePage({
     author = owner;
   }
 
-  const articlesResponse = await getArticles({
-    page: 1,
-    perPage: 20,
-  });
+  let recommendations: Recommendation[] = [];
 
-const availableRecommendations = articlesResponse.articles.filter(
-  (item) => item._id !== article._id,
-);
+  try {
+    const articlesResponse = await getArticles({
+      page: 1,
+      perPage: 20,
+    });
 
-const recommendationArticles = getRandomItems(
-  availableRecommendations,
-  3,
-);
+    const availableRecommendations =
+      articlesResponse.articles.filter(
+        (item) => item._id !== article._id,
+      );
 
-  const recommendations = await Promise.all(
-    recommendationArticles.map(async (item) => {
-      const recommendationOwner = item.ownerId as
-        | string
-        | ArticleOwner
-        | null;
+    const recommendationArticles = getRandomItems(
+      availableRecommendations,
+      3,
+    );
 
-      let recommendationAuthor: ArticleOwner | null = null;
+    recommendations = await Promise.all(
+      recommendationArticles.map(async (item) => {
+        const recommendationOwner = item.ownerId as
+          | string
+          | ArticleOwner
+          | null;
 
-      if (typeof recommendationOwner === "string") {
-        try {
-          recommendationAuthor =
-            await getUserInfo(recommendationOwner);
-        } catch {
-          recommendationAuthor = null;
+        let recommendationAuthor: ArticleOwner | null = null;
+
+        if (typeof recommendationOwner === "string") {
+          try {
+            recommendationAuthor =
+              await getUserInfo(recommendationOwner);
+          } catch {
+            recommendationAuthor = null;
+          }
+        } else if (recommendationOwner) {
+          recommendationAuthor = recommendationOwner;
         }
-      } else if (recommendationOwner) {
-        recommendationAuthor = recommendationOwner;
-      }
 
-      return {
-        article: item,
-        author: recommendationAuthor,
-      };
-    }),
-  );
+        return {
+          article: item,
+          author: recommendationAuthor,
+        };
+      }),
+    );
+  } catch {
+    recommendations = [];
+  }
 
-      const paragraphs = article.article
-        .split(/\/n|\n+/)
-        .map((paragraph) => paragraph.trim())
-        .filter(Boolean);
+  const paragraphs = article.article
+    .split(/\/n|\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
 
   return (
     <main className={styles.page}>
@@ -159,50 +171,54 @@ const recommendationArticles = getRandomItems(
               {formatDate(article.date)}
             </p>
 
-            <h2 className={styles.recommendationsTitle}>
-              You can also interested
-            </h2>
+            {recommendations.length > 0 && (
+              <>
+                <h2 className={styles.recommendationsTitle}>
+                  You can also interested
+                </h2>
 
-            <div className={styles.recommendations}>
-              {recommendations.map(
-                ({ article: item, author: itemAuthor }) => (
-                  <article
-                    key={item._id}
-                    className={styles.recommendationCard}
-                  >
-                    <div
-                      className={styles.recommendationContent}
-                    >
-                      <h3
-                        className={styles.recommendationTitle}
+                <div className={styles.recommendations}>
+                  {recommendations.map(
+                    ({ article: item, author: itemAuthor }) => (
+                      <article
+                        key={item._id}
+                        className={styles.recommendationCard}
                       >
-                        {item.title}
-                      </h3>
+                        <div
+                          className={styles.recommendationContent}
+                        >
+                          <h3
+                            className={styles.recommendationTitle}
+                          >
+                            {item.title}
+                          </h3>
 
-                      <p
-                        className={styles.recommendationAuthor}
-                      >
-                        {itemAuthor?.name ?? "Unknown author"}
-                      </p>
-                    </div>
+                          <p
+                            className={styles.recommendationAuthor}
+                          >
+                            {itemAuthor?.name ?? "Unknown author"}
+                          </p>
+                        </div>
 
-                    <Link
-                      href={`/articles/${item._id}`}
-                      className={styles.arrowButton}
-                      aria-label={`Open article ${item.title}`}
-                    >
-                      <svg
-                        className={styles.arrowIcon}
-                        aria-hidden="true"
-                        focusable="false"
-                      >
-                         <use href="/sprite.svg#icon-Genericarrow-up-right-small" />
-                      </svg>
-                    </Link>
-                  </article>
-                ),
-              )}
-            </div>
+                        <Link
+                          href={`/articles/${item._id}`}
+                          className={styles.arrowButton}
+                          aria-label={`Open article ${item.title}`}
+                        >
+                          <svg
+                            className={styles.arrowIcon}
+                            aria-hidden="true"
+                            focusable="false"
+                          >
+                            <use href="/sprite.svg#icon-Genericarrow-up-right-small" />
+                          </svg>
+                        </Link>
+                      </article>
+                    ),
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           <ArticleSaveButton articleId={article._id} />
