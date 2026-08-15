@@ -5,14 +5,13 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
+import { ARTICLES_PER_PAGE } from "./constants";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import type { Article } from "@/types/article";
 import css from "./AuthorArticlesSection.module.css";
-
-const ARTICLES_PER_PAGE = 9;
 
 type AuthorArticlesSectionProps = {
   authorId: string;
@@ -41,11 +40,7 @@ function getUniqueArticles(pages: { articles: Article[] }[]): Article[] {
   return [...articlesById.values()];
 }
 
-// Наша частина по ТЗ AuthorPage: запит статей автора, стан пагінації, Load More
-// (спільний компонент Pagination), скрол до щойно підвантажених статей, лоадер
-// і toast-повідомлення про помилку. Розмітку ul>li, картку статті (ArticlesItem)
-// та кнопку закладки (ButtonAddToBookmarks) реалізує колега — тут вони лише
-// підключаються через контракт пропсів ArticlesList.
+
 export default function AuthorArticlesSection({
   authorId,
   authorName,

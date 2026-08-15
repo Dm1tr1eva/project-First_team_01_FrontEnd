@@ -3,13 +3,12 @@ import { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 
+import { ARTICLES_PER_PAGE } from "./constants";
 import { getUserInfo, getUserArticles } from "@/lib/api/serverApi";
 import getQueryClient from "@/lib/api/getQueryClient";
 import AuthorInfo from "@/components/AuthorInfo/AuthorInfo";
 import AuthorArticlesSection from "./AuthorArticlesSection";
 import css from "./page.module.css";
-
-const ARTICLES_PER_PAGE = 12;
 
 type AuthorPageProps = {
   params: Promise<{
