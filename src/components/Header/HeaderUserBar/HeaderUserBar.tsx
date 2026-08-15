@@ -27,7 +27,7 @@ export default function HeaderUserBar({ user, className }: UserBarProps) {
       </div>
 
       <Link href={`/logoutuser/`} title="User logout">
-        <svg width="24" height="24">
+        <svg width="15" height="15">
           <use href="/sprite.svg#icongenericlogout" />
         </svg>
       </Link>
