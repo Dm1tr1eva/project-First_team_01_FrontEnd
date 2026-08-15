@@ -5,8 +5,10 @@ import css from "./Header.module.css";
 
 import { useAuthStore } from "../../lib/store/authStore";
 import { useRouter, usePathname } from "next/navigation";
+import HeaderUserBar from "./HeaderUserBar/HeaderUserBar";
 
 import { useEffect, useState } from "react";
+import NavigationItem from "./NavigationItem/NavigationItem";
 
 export default function Header() {
   const router = useRouter();
@@ -18,7 +20,13 @@ export default function Header() {
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
 
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
   const handleBurger = () => {
     setIsOpen((prev) => !prev);
   };
@@ -31,6 +39,7 @@ export default function Header() {
       <header className={css.header}>
         <div className={`container ${css.headerWrapper}`}>
           <Link
+            title="Home page"
             onClick={() => setIsOpen(false)}
             href="/"
             className={css.headerLink}
@@ -43,36 +52,17 @@ export default function Header() {
           <div className={css.navigationDescFild}>
             <nav aria-label="Main Navigation">
               <ul className={css.navigationDesc}>
-                <li className={css.navigationItemDesc}>
-                  <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
-                    Home
-                  </Link>
-                </li>
-
-                <li className={css.navigationItemDesc}>
-                  <Link
-                    onClick={() => setIsOpen(false)}
-                    href="/articles"
-                    className={getLinkClass("/articles")}
-                  >
-                    Articles
-                  </Link>
-                </li>
-
-                <li className={css.navigationItemDesc}>
-                  <Link
-                    onClick={() => setIsOpen(false)}
-                    href="/authors"
-                    className={getLinkClass("/authors")}
-                  >
-                    Creators
-                  </Link>
-                </li>
+                <NavigationItem
+                  setIsOpen={setIsOpen}
+                  className="navigationItemDesc"
+                  getLinkClass={getLinkClass}
+                />
 
                 {isAuthenticated ? (
                   <>
                     <li className={css.navigationItemDesc}>
                       <Link
+                        title="My Profile page"
                         onClick={() => setIsOpen(false)}
                         href="/profile"
                         prefetch={false}
@@ -84,6 +74,7 @@ export default function Header() {
 
                     <li className={css.navigationItem}>
                       <Link
+                        title="Create an article page"
                         onClick={() => setIsOpen(false)}
                         href="/articles/create"
                         prefetch={false}
@@ -93,27 +84,13 @@ export default function Header() {
                       </Link>
                     </li>
 
-                    <li className={css.userFieldDesc}>
-                      <div className={css.userFieldFirst}>
-                        <img
-                          className={css.userAvatar}
-                          src={user?.avatarUrl ?? "/default-avatar.png"}
-                          alt={user?.name || "User avatar"}
-                        />
-
-                        <p className={css.userName}>{user?.name}</p>
-                      </div>
-                      <Link href={`/logoutuser/`}>
-                        <svg width="24" height="24">
-                          <use href="/sprite.svg#icongenericlogout" />
-                        </svg>
-                      </Link>
-                    </li>
+                    <HeaderUserBar user={user || null} className="userFieldDesc" />
                   </>
                 ) : (
                   <>
                     <li className={css.navigationItemDesc}>
                       <Link
+                        title="Log in page"
                         onClick={() => setIsOpen(false)}
                         href="/login"
                         prefetch={false}
@@ -125,6 +102,7 @@ export default function Header() {
 
                     <li className={css.navigationItem}>
                       <Link
+                        title="Register page"
                         onClick={() => setIsOpen(false)}
                         href="/register"
                         prefetch={false}
@@ -160,36 +138,16 @@ export default function Header() {
       <div className={isOpen ? `${css.navBarMob} ${css.isOpen}` : css.navBarMob}>
         <nav aria-label="Main Navigation">
           <ul className={css.navigation}>
-            <li className={css.navigationItem}>
-              <Link onClick={() => setIsOpen(false)} href="/" className={getLinkClass("/")}>
-                Home
-              </Link>
-            </li>
-
-            <li className={css.navigationItem}>
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/articles"
-                className={getLinkClass("/articles")}
-              >
-                Articles
-              </Link>
-            </li>
-
-            <li className={css.navigationItem}>
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/authors"
-                className={getLinkClass("/authors")}
-              >
-                Creators
-              </Link>
-            </li>
-
+            <NavigationItem
+              setIsOpen={setIsOpen}
+              className="navigationItem"
+              getLinkClass={getLinkClass}
+            />
             {isAuthenticated ? (
               <>
                 <li className={css.navigationItem}>
                   <Link
+                    title="My Profile page"
                     onClick={() => setIsOpen(false)}
                     href="/profile"
                     prefetch={false}
@@ -201,6 +159,7 @@ export default function Header() {
 
                 <li className={css.navigationItem}>
                   <Link
+                    title="Create an article page"
                     onClick={() => setIsOpen(false)}
                     href="/articles/create"
                     prefetch={false}
@@ -210,28 +169,13 @@ export default function Header() {
                   </Link>
                 </li>
 
-                <li className={css.userField}>
-                  <div className={css.userFieldFirst}>
-                    <img
-                      className={css.userAvatar}
-                      src={user?.avatarUrl ?? "/default-avatar.png"}
-                      alt={user?.name || "User avatar"}
-                    />
-
-                    <p className={css.userName}>{user?.name}</p>
-                  </div>
-
-                  <Link href={`/logoutuser/`}>
-                    <svg width="24" height="24">
-                      <use href="/sprite.svg#icongenericlogout" />
-                    </svg>
-                  </Link>
-                </li>
+                <HeaderUserBar user={user || null} className="userField" />
               </>
             ) : (
               <>
                 <li className={css.navigationItem}>
                   <Link
+                    title="Log in page"
                     onClick={() => setIsOpen(false)}
                     href="/login"
                     prefetch={false}
@@ -243,6 +187,7 @@ export default function Header() {
 
                 <li className={css.navigationItem}>
                   <Link
+                    title="Register page"
                     onClick={() => setIsOpen(false)}
                     href="/register"
                     prefetch={false}
