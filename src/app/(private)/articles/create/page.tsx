@@ -3,9 +3,9 @@ import css from './page.module.css';
 
 export default function CreateArticlePage() {
   return (
-    <main className="container">
+    <div className="container">
       <h2 className={css.title}>Create an article</h2>
       <AddArticleForm/>
-   </main>
+   </div>
   );
 }
