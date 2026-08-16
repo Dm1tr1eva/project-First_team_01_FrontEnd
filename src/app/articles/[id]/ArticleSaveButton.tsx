@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import ButtonAddToBookmarks from "@/components/ButtonAddToBookmarks/ButtonAddToBookmarks";
+import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import { getSavedArticles } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 
@@ -11,19 +12,25 @@ type ArticleSaveButtonProps = {
 };
 
 type SavedState = {
-  userId: string;
+  userId?: string;
   articleIds: string[];
-} | null;
+};
 
 export default function ArticleSaveButton({
   articleId,
 }: ArticleSaveButtonProps) {
   const user = useAuthStore((state) => state.user);
+  const userId = user?.id;
 
-  const [savedState, setSavedState] = useState<SavedState>(null);
+  const [savedState, setSavedState] = useState<SavedState>({
+    userId: undefined,
+    articleIds: [],
+  });
+
+  const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       return;
     }
 
@@ -35,14 +42,14 @@ export default function ArticleSaveButton({
 
         if (!cancelled) {
           setSavedState({
-            userId: user.id,
+            userId,
             articleIds: savedArticles.map((article) => article._id),
           });
         }
       } catch {
         if (!cancelled) {
           setSavedState({
-            userId: user.id,
+            userId,
             articleIds: [],
           });
         }
@@ -54,33 +61,39 @@ export default function ArticleSaveButton({
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [userId]);
 
   const savedArticleIds =
-    user && savedState?.userId === user.id
+    userId && savedState.userId === userId
       ? savedState.articleIds
       : [];
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
-    if (!user) {
+    if (!userId) {
       return;
     }
 
     setSavedState({
-      userId: user.id,
+      userId,
       articleIds,
     });
   };
 
   return (
-    <ButtonAddToBookmarks
-      articleId={articleId}
-      isSaved={savedArticleIds.includes(articleId)}
-      variant="wide"
-      onGuestClick={() => {
-        // ModalErrorSave підключимо після завершення ArticlePage.
-      }}
-      onSavedArticlesChange={handleSavedArticlesChange}
-    />
+    <>
+      <ButtonAddToBookmarks
+        articleId={articleId}
+        isSaved={savedArticleIds.includes(articleId)}
+        variant="wide"
+        onGuestClick={() => setIsErrorSaveOpen(true)}
+        onSavedArticlesChange={handleSavedArticlesChange}
+      />
+
+      {isErrorSaveOpen && (
+        <ModalErrorSave
+          onClose={() => setIsErrorSaveOpen(false)}
+        />
+      )}
+    </>
   );
 }

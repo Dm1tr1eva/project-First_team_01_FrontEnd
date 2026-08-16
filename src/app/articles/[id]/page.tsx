@@ -1,5 +1,6 @@
 import { randomInt } from "node:crypto";
-import Link from "next/link";
+import Image from "next/image";
+import Link from "next/link"; 
 
 import {
   getArticleById,
@@ -132,14 +133,14 @@ export default async function ArticlePage({
     <main className={styles.page}>
       <h1 className={styles.title}>{article.title}</h1>
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={styles.heroImage}
-        src={article.img}
-        alt={article.title}
-        width={1226}
-        height={624}
-      />
+  <Image
+    className={styles.heroImage}
+    src={article.img}
+    alt={article.title}
+    width={1226}
+    height={624}
+    sizes="(max-width: 767px) 361px, (max-width: 1439px) 704px, 1226px"
+  />
 
       <div className={styles.content}>
         <div className={styles.articleText}>
