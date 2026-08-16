@@ -27,6 +27,7 @@ function buildRefreshedCookieHeader(request: NextRequest, setCookieHeaders: stri
     const { name, value } = parseSetCookie(cookieStr);
     if (value !== undefined) cookieMap.set(name, value);
   }
+
   return Array.from(cookieMap, ([name, value]) => `${name}=${value}`).join("; ");
 }
 
