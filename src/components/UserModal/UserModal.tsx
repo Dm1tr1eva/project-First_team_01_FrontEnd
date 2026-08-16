@@ -25,9 +25,10 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && isOpen) {
       setName(user.name || "");
       setAvatarPreview(user.avatarUrl || "");
+      setErrorName("");
     }
   }, [user, isOpen]);
 
@@ -45,6 +46,20 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     if (e.target === e.currentTarget) onClose();
   };
 
+  // Жива валідація імені при вводі
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setName(value);
+
+    if (value.trim().length === 0) {
+      setErrorName("Name is required");
+    } else if (value.trim().length < 2) {
+      setErrorName("Name must be at least 2 characters long");
+    } else {
+      setErrorName("");
+    }
+  };
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -53,12 +68,17 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     }
   };
 
-const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorName("");
 
     if (!name.trim()) {
       setErrorName("Name is required");
+      return;
+    }
+
+    if (name.trim().length < 2) {
+      setErrorName("Name must be at least 2 characters long");
       return;
     }
 
@@ -69,11 +89,7 @@ const handleSubmit = async (e: FormEvent) => {
 
       if (avatarFile) {
         const avatarResponse = await updateAvatar(avatarFile);
-
-        const newAvatarUrl =
-          avatarResponse?.avatarUrl || (avatarResponse as any)?.user?.avatarUrl;
-
-        updatedUserData = { ...updatedUserData, avatarUrl: newAvatarUrl };
+        updatedUserData = { ...updatedUserData, avatarUrl: avatarResponse.avatarUrl };
       }
 
       if (setUser && updatedUserData) {
@@ -91,12 +107,9 @@ const handleSubmit = async (e: FormEvent) => {
     }
   };
 
-  const isFormValid = name.trim().length >= 2;
-
   return (
     <div className={css.backdrop} onClick={handleBackdropClick}>
       <div className={`${css.container} ${avatarPreview ? css.containerHasPhoto : ""}`}>
-
         <button type="button" className={css.closeButton} onClick={onClose} aria-label="Close">
           <CloseIcon />
         </button>
@@ -104,7 +117,6 @@ const handleSubmit = async (e: FormEvent) => {
         <h2 className={css.title}>Edit profile</h2>
 
         <form onSubmit={handleSubmit} className={css.form}>
-
           {avatarPreview ? (
             <label className={css.filledAvatarWrapper} title="Change photo">
               <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
@@ -124,7 +136,7 @@ const handleSubmit = async (e: FormEvent) => {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
               className={`${css.nameInput} ${errorName ? css.inputError : ""}`}
               placeholder="Your name"
             />
@@ -133,8 +145,8 @@ const handleSubmit = async (e: FormEvent) => {
 
           <button
             type="submit"
-            className={`${css.saveButton} ${!isFormValid || isLoading ? css.saveButtonDisabled : ""}`}
-            disabled={!isFormValid || isLoading}
+            className={`${css.saveButton} ${isLoading ? css.saveButtonDisabled : ""}`}
+            disabled={isLoading}
           >
             {isLoading ? "Saving..." : "Save"}
           </button>
