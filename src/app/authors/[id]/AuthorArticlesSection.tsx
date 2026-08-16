@@ -9,7 +9,7 @@ import { ARTICLES_PER_PAGE } from "./constants";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useCurrentUserId } from "@/hooks/useCurrentUser";
 import type { Article } from "@/types/article";
 import css from "./AuthorArticlesSection.module.css";
 
@@ -50,7 +50,12 @@ export default function AuthorArticlesSection({
   const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
 
-  const currentUserId = useAuthStore((state) => state.user?.id);
+  // Раніше: useAuthStore((state) => state.user?.id) — бекенд реально
+  // повертає "_id", а не "id", тому currentUserId завжди був undefined,
+  // запит на збережені статті ніколи не робився, і кнопка Save завжди
+  // показувала "не збережено" навіть для вже збережених статей. Детальніше
+  // в коментарі src/hooks/useCurrentUser.ts.
+  const currentUserId = useCurrentUserId();
 
   const { data: savedArticles } = useQuery({
     queryKey: ["saved-articles", currentUserId],

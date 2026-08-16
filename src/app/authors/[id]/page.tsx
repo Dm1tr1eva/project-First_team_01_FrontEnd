@@ -5,6 +5,7 @@ import { isAxiosError } from "axios";
 
 import { ARTICLES_PER_PAGE } from "./constants";
 import { getUserInfo, getUserArticles } from "@/lib/api/serverApi";
+import { getCurrentUserServer } from "./getCurrentUserServer";
 import getQueryClient from "@/lib/api/getQueryClient";
 import AuthorInfo from "@/components/AuthorInfo/AuthorInfo";
 import AuthorArticlesSection from "./AuthorArticlesSection";
@@ -47,6 +48,16 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
   const user = await getUserOrNotFound(id);
 
   const queryClient = getQueryClient();
+
+  // Гідруємо кеш під ключем ["me"] поточним відвідувачем (може бути null
+  // для гостя — це нормально, не помилка). Раніше AuthorArticlesSection
+  // брав currentUserId з Zustand-стору (useAuthStore), який заповнюється
+  // асинхронно, через що запит на збережені статті взагалі не робився
+  // одразу при вході на сторінку, і кнопка Save завжди показувала "не
+  // збережено" навіть для вже збережених статей. Детальніше в коментарі
+  // src/hooks/useCurrentUser.ts.
+  const currentUser = await getCurrentUserServer();
+  queryClient.setQueryData(["me"], currentUser);
 
   // Якщо prefetch не вдався (наприклад, бекенд тимчасово недоступний), не валимо
   // всю сторінку: клієнтський useInfiniteQuery в AuthorArticlesSection повторить
