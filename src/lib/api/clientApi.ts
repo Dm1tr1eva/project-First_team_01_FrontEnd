@@ -51,7 +51,12 @@ export type GetUsersResponse = {
 };
 
 export async function getUsers(
-  params: { page?: number; perPage?: number } = {},
+  params: {
+    page?: number;
+    perPage?: number;
+    sortBy?: "name" | "articlesAmount" | "createdAt" | "rating";
+    order?: "asc" | "desc";
+  } = {},
 ): Promise<GetUsersResponse> {
   const { data } = await api.get<GetUsersResponse>("/users", { params });
   return data;

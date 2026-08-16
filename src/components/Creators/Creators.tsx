@@ -7,17 +7,20 @@ import { getUsers } from "@/lib/api/clientApi";
 import css from "./Creators.module.css";
 
 const TOP_CREATORS_COUNT = 6;
-const FETCH_PER_PAGE = 100;
 
 export default function Creators() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["users", "top-creators"],
-    queryFn: () => getUsers({ page: 1, perPage: FETCH_PER_PAGE }),
+    queryFn: () =>
+      getUsers({
+        page: 1,
+        perPage: TOP_CREATORS_COUNT,
+        sortBy: "articlesAmount",
+        order: "desc",
+      }),
   });
 
-  const topCreators = [...(data?.users ?? [])]
-    .sort((a, b) => b.articlesAmount - a.articlesAmount)
-    .slice(0, TOP_CREATORS_COUNT);
+  const topCreators = data?.users ?? [];
 
   return (
     <section className={css.section}>
