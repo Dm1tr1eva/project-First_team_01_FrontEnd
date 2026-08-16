@@ -45,7 +45,7 @@ export default function Creators() {
             <li key={_id} className={css.card}>
               <Link href={`/authors/${_id}`} className={css.cardLink}>
                 <Image
-                  src={avatarUrl ?? "/default-avatar.png"}
+                  src={avatarUrl?.replace(/^http:\/\//, "https://") ?? "/default-avatar.png"}
                   alt={`Фото автора ${name}`}
                   width={104}
                   height={104}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { proxyRequest } from "@/lib/api/proxyRequest";
 
-const ALLOWED_SORT_FIELDS = ["name", "articlesAmount", "createdAt", "rating"] as const;
+const ALLOWED_SORT_FIELDS = ["createdAt", "articlesAmount"] as const;
 const ALLOWED_ORDER = ["asc", "desc"] as const;
 
 type SortField = (typeof ALLOWED_SORT_FIELDS)[number];
