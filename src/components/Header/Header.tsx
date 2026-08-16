@@ -61,7 +61,10 @@ export default function Header() {
 
   return (
     <>
-      <header className={`${css.header} ${isOpen ? css.headerFixed : ""}`}>
+      <header
+        className={`${css.header} ${isOpen ? css.headerFixed : ""}`}
+        data-scroll-behavior="smooth"
+      >
         <div className={`container ${css.headerWrapper}`}>
           <Link
             title="Home page"
