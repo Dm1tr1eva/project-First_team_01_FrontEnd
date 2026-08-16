@@ -50,7 +50,6 @@ interface ArticlesListIntegrationProps {
   scrollTargetRef: Ref<HTMLLIElement>;
 }
 
-// PR #28 owns this shared prop contract; Issue #7 only composes the list.
 const IntegratedArticlesList = ArticlesList as ComponentType<ArticlesListIntegrationProps>;
 
 async function fetchPopularArticles(): Promise<PopularArticlesResponse> {

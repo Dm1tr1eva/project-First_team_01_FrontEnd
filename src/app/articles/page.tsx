@@ -122,6 +122,7 @@ export default function ArticlesPage() {
     [data?.pages],
   );
   const totalArticles = data?.pages[0]?.totalItems ?? 0;
+  const isArticlesCountLoading = isPending || isPlaceholderData;
   const savedArticleIds = useMemo(() => {
     if (!userId) {
       return [];
@@ -202,7 +203,9 @@ export default function ArticlesPage() {
         </SectionTitle>
 
         <div className={css.toolbar}>
-          <p className={css.count}>{totalArticles} articles</p>
+          <p className={css.count} aria-live="polite">
+            {isArticlesCountLoading ? null : `${totalArticles} articles`}
+          </p>
 
           <ArticleFilter
             value={filter}
