@@ -30,6 +30,9 @@
     <symbol id="icon-Controlseye-crossed" viewBox="0 0 32 32">
       <path stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-width="1.333" d="M19.214 22.65c-1.086.504-2.291.833-3.56.833-4.779 0-8.654-4.655-8.654-5.837 0-.671 1.245-2.456 3.194-3.878m13.075 5.748c.662-.797 1.038-1.502 1.038-1.871 0-1.183-3.874-5.838-8.654-5.838 2.103 0 3.808 1.691 3.808 3.777m-3.807 3.778c-2.103 0-3.808-1.691-3.808-3.777M25 11.807c-2.636-2.181-5.713-3.434-9-3.434a13 13 0 0 0-3.462.473M7 11.807q.366-.303.744-.582M7 7l16.714 16.875"/>
     </symbol>
+    <symbol id="icon-Genericarrow-up-right" viewBox="0 0 15 15">
+      <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5" d="M0.25 14.5L14.4945 0.25M14.4946 7.9216L14.4945 0.25H6.82296"/>
+    </symbol>
     <symbol id="icon-Genericburger-regular" viewBox="0 0 32 32">
       <path stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-width="1.333" d="M7.5 9.5h17m-17 12h17m-17-6h17"/>
     </symbol>
@@ -53,6 +56,9 @@
     </symbol>
     <symbol id="icon-Genericsearch" viewBox="0 0 32 32">
       <path stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-width="1.333" d="m25 25-4.413-4.405m0 0A7.962 7.962 0 1 0 9.333 9.329a7.962 7.962 0 0 0 11.255 11.265z"/>
+    </symbol>
+    <symbol id="icon-Genericalert-circle" viewBox="0 0 40 40">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M20 28.4444V30.5556M20 9.44444V22.1111M39 20C39 30.4934 30.4934 39 20 39C9.50659 39 1 30.4934 1 20C1 9.50659 9.50659 1 20 1C30.4934 1 39 9.50659 39 20Z"/>
     </symbol>
     <symbol id="icon-Genericshare-ios-big" viewBox="0 0 32 32">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="1.333" d="M15.999 19.5V2m4.716 4.2L15.999 2l-4.716 4.2m.236 3.967H7.466a2.667 2.667 0 0 0-2.667 2.667v14.5a2.667 2.667 0 0 0 2.667 2.667h17.067a2.667 2.667 0 0 0 2.667-2.667v-14.5a2.667 2.667 0 0 0-2.667-2.667H20.48"/>

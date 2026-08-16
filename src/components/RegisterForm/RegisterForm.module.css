@@ -5,8 +5,11 @@
 }
 .container {
   width: 360px;
+  margin-top: 85px;
+  margin-bottom: 85px;
   padding: 41px 32px;
-
+  background-color: #d1e0d8;
+  border-radius: 32px;
   display: flex;
   flex-direction: column;
 }

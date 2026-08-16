@@ -29,7 +29,7 @@ export default function Header() {
   return (
     <>
       <header className={css.header}>
-        <div className={`${css.headerWrapper} ${css.container}`}>
+        <div className={`container ${css.headerWrapper}`}>
           <Link
             onClick={() => setIsOpen(false)}
             href="/"
