@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import ButtonAddToBookmarks from "@/components/ButtonAddToBookmarks/ButtonAddToBookmarks";
 import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
+import { useCurrentUserId } from "@/hooks/useCurrentUser";
 import { getSavedArticles } from "@/lib/api/clientApi";
-import { useAuthStore } from "@/lib/store/authStore";
 
 type ArticleSaveButtonProps = {
   articleId: string;
@@ -19,8 +20,7 @@ type SavedState = {
 export default function ArticleSaveButton({
   articleId,
 }: ArticleSaveButtonProps) {
-  const user = useAuthStore((state) => state.user);
-  const userId = user?.id;
+  const userId = useCurrentUserId();
 
   const [savedState, setSavedState] = useState<SavedState>({
     userId: undefined,
@@ -29,44 +29,18 @@ export default function ArticleSaveButton({
 
   const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
 
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
-
-    let cancelled = false;
-
-    async function loadSavedArticles() {
-      try {
-        const savedArticles = await getSavedArticles();
-
-        if (!cancelled) {
-          setSavedState({
-            userId,
-            articleIds: savedArticles.map((article) => article._id),
-          });
-        }
-      } catch {
-        if (!cancelled) {
-          setSavedState({
-            userId,
-            articleIds: [],
-          });
-        }
-      }
-    }
-
-    loadSavedArticles();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  const { data: savedArticles } = useQuery({
+    queryKey: ["saved-articles", userId],
+    queryFn: getSavedArticles,
+    enabled: Boolean(userId),
+  });
 
   const savedArticleIds =
     userId && savedState.userId === userId
       ? savedState.articleIds
-      : [];
+      : userId
+        ? (savedArticles?.map((article) => article._id) ?? [])
+        : [];
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
     if (!userId) {
