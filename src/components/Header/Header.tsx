@@ -21,29 +21,47 @@ export default function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   useEffect(() => {
-    if (isOpen) {
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-    } else {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    }
+    const handleResize = () => {
+      if (window.innerWidth > 1439) {
+        setIsOpen(false);
+
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+
+        return;
+      }
+
+      if (isOpen) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      } else {
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
   const handleBurger = () => {
     setIsOpen((prev) => !prev);
   };
+
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
   return (
     <>
-      <header className={css.header}>
+      <header className={`${css.header} ${isOpen ? css.headerFixed : ""}`}>
         <div className={`container ${css.headerWrapper}`}>
           <Link
             title="Home page"

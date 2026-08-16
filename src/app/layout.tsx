@@ -41,7 +41,7 @@ export default function RootLayout({
   modal?: React.ReactNode;
 }>) {
   return (
-    <html scroll-behavior="smooth" lang="en" className={`${manrope.variable} ${merienda.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${merienda.variable}`}>
       <body>
         <TanStackProvider>
           <AuthProvider>
