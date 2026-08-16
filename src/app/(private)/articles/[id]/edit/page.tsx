@@ -31,9 +31,9 @@ export default async function EditArticlePage({
   }
 
   return (
-    <main className="container">
+    <div className="container">
       <h2>Edit article</h2>
       <AddArticleForm article={article} />
-    </main>
+    </div>
   );
 }
