@@ -27,7 +27,12 @@ export default function Creators() {
       <div className={css.header}>
         <h2 className={css.title}>Top Creators</h2>
         <Link href="/authors" className={css.link}>
-          Go to all Creators
+          <span>Go to all Creators</span>
+          <span className={css.linkIcon} aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 15 15" focusable="false">
+              <use href="/sprite.svg#icon-Genericarrow-up-right" />
+            </svg>
+          </span>
         </Link>
       </div>
 
@@ -38,14 +43,16 @@ export default function Creators() {
         <ul className={css.list}>
           {topCreators.map(({ _id, name, avatarUrl }) => (
             <li key={_id} className={css.card}>
-              <Image
-                src={avatarUrl ?? "/default-avatar.png"}
-                alt={`Фото автора ${name}`}
-                width={104}
-                height={104}
-                className={css.avatar}
-              />
-              <p className={css.name}>{name}</p>
+              <Link href={`/authors/${_id}`} className={css.cardLink}>
+                <Image
+                  src={avatarUrl ?? "/default-avatar.png"}
+                  alt={`Фото автора ${name}`}
+                  width={104}
+                  height={104}
+                  className={css.avatar}
+                />
+                <p className={css.name}>{name}</p>
+              </Link>
             </li>
           ))}
         </ul>
