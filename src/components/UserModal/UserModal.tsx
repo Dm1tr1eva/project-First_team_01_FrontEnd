@@ -53,7 +53,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorName("");
 
@@ -70,7 +70,10 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
       if (avatarFile) {
         const avatarResponse = await updateAvatar(avatarFile);
 
-        updatedUserData = { ...updatedUserData, avatarUrl: avatarResponse.avatarUrl };
+        const newAvatarUrl =
+          avatarResponse?.avatarUrl || (avatarResponse as any)?.user?.avatarUrl;
+
+        updatedUserData = { ...updatedUserData, avatarUrl: newAvatarUrl };
       }
 
       if (setUser && updatedUserData) {
@@ -80,7 +83,9 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
       onClose();
       router.refresh();
     } catch (err: any) {
-      setErrorName(err?.response?.data?.message || err?.message || "Error updating profile");
+      setErrorName(
+        err?.response?.data?.message || err?.message || "Error updating profile"
+      );
     } finally {
       setIsLoading(false);
     }
