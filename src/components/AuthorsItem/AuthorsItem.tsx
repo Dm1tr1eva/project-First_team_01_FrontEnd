@@ -9,12 +9,15 @@ interface AuthorUserProps {
 }
 
 export default function AuthorsItem({ author }: AuthorUserProps) {
+  const firstName = author.name.trim().split(/\s+/)[0];
+  const avatarUrl = author.avatarUrl?.replace(/^http:\/\//, "https://");
+
   return (
     <li className={css.item}>
       <Link href={`/authors/${author._id}`} className={css.link}>
-        {author.avatarUrl ? (
+        {avatarUrl ? (
           <Image
-            src={author.avatarUrl}
+            src={avatarUrl}
             alt={author.name}
             width={262}
             height={262}
@@ -24,7 +27,7 @@ export default function AuthorsItem({ author }: AuthorUserProps) {
           <div className={css.avatarPlaceholder}>{author.name.charAt(0).toUpperCase()}</div>
         )}
 
-        <p className={css.name}>{author.name}</p>
+        <p className={css.name}>{firstName}</p>
       </Link>
     </li>
   );
