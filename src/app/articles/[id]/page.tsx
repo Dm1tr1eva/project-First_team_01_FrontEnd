@@ -130,7 +130,7 @@ export default async function ArticlePage({
     .filter(Boolean);
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <h1 className={styles.title}>{article.title}</h1>
 
       <Image
@@ -225,6 +225,6 @@ export default async function ArticlePage({
           <ArticleSaveButton articleId={article._id} />
         </aside>
       </div>
-    </main>
+    </div>
   );
 }
