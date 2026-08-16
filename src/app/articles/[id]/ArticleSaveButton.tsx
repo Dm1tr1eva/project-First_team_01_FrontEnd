@@ -11,19 +11,23 @@ type ArticleSaveButtonProps = {
 };
 
 type SavedState = {
-  userId: string;
+  userId?: string;
   articleIds: string[];
-} | null;
+};
 
 export default function ArticleSaveButton({
   articleId,
 }: ArticleSaveButtonProps) {
   const user = useAuthStore((state) => state.user);
+  const userId = user?.id;
 
-  const [savedState, setSavedState] = useState<SavedState>(null);
+  const [savedState, setSavedState] = useState<SavedState>({
+    userId: undefined,
+    articleIds: [],
+  });
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       return;
     }
 
@@ -35,14 +39,14 @@ export default function ArticleSaveButton({
 
         if (!cancelled) {
           setSavedState({
-            userId: user.id,
+            userId,
             articleIds: savedArticles.map((article) => article._id),
           });
         }
       } catch {
         if (!cancelled) {
           setSavedState({
-            userId: user.id,
+            userId,
             articleIds: [],
           });
         }
@@ -54,20 +58,20 @@ export default function ArticleSaveButton({
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [userId]);
 
   const savedArticleIds =
-    user && savedState?.userId === user.id
+    userId && savedState.userId === userId
       ? savedState.articleIds
       : [];
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
-    if (!user) {
+    if (!userId) {
       return;
     }
 
     setSavedState({
-      userId: user.id,
+      userId,
       articleIds,
     });
   };
