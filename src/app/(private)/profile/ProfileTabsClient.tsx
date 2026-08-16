@@ -12,12 +12,7 @@ type ProfileTabsClientProps = {
   savedArticles: ReactNode;
 };
 
-// Тримає лише стан активного табу. Слоти @myArticles/@savedArticles вже
-// відрендерені сервером (можуть містити власні "use client" межі всередині —
-// це нормально, Server Component-батько може передавати такі готові дерева
-// в client-компонент як prop/children) — тут ми лише вирішуємо, який з них
-// показати. Перемикання табу розмонтовує неактивний слот, тож пагінація
-// в ньому завжди починається з початку при поверненні.
+
 export default function ProfileTabsClient({
   children,
   myArticles,

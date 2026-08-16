@@ -106,8 +106,6 @@ export default function SavedArticlesTab() {
     toast.error("Please log in to save articles");
   };
 
-  // На цій вкладці всі показані статті за визначенням "збережені", тож коли юзер
-  // прибирає закладку прямо тут — статтю варто одразу прибрати зі списку.
   const handleSavedArticlesChange = (articleIds: string[]) => {
     const stillSavedIds = new Set(articleIds);
     setRemovedArticleIds((previous) => {
