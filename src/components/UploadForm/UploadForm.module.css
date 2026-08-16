@@ -1,0 +1,395 @@
+/* =========================================================
+   UPLOAD FORM — FIGMA
+   Desktop: 392 × 354
+   Tablet:  522 × 354
+   Mobile:  360 × 322
+========================================================= */
+
+.wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card {
+    position: relative;
+
+    width: 392px;
+    height: 354px;
+
+    flex-shrink: 0;
+
+    box-sizing: border-box;
+
+    padding: 37px 32px 0;
+
+    background: #d1e0d8;
+    border-radius: 32px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.closeButton {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    width: 18px;
+    height: 18px;
+
+    padding: 0;
+    border: 0;
+
+    background: transparent;
+
+    cursor: pointer;
+}
+
+.closeButton span {
+    position: absolute;
+
+    top: 8px;
+    left: 2px;
+
+    width: 14px;
+    height: 1px;
+
+    background: #7b8984;
+
+    border-radius: 1px;
+}
+
+.closeButton span:first-child {
+    transform: rotate(45deg);
+}
+
+.closeButton span:last-child {
+    transform: rotate(-45deg);
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.title {
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    color: #10162b;
+
+    font-size: 24px;
+    line-height: 29px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form {
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* =========================================================
+   PHOTO / CAMERA
+========================================================= */
+
+.photoButton {
+    position: relative;
+
+    width: 90px;
+    height: 90px;
+
+    min-width: 90px;
+    min-height: 90px;
+
+    margin: 10px 0 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: #679b82;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    cursor: pointer;
+}
+
+.photoButton:hover {
+    transform: none;
+}
+
+.photoButton:focus-visible {
+    outline: 2px solid #315e4d;
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   CAMERA ICON
+========================================================= */
+
+.cameraIcon {
+    width: 48px;
+    height: 48px;
+
+    display: block;
+
+    color: #244c3d;
+}
+
+/* =========================================================
+   FILE INPUT
+========================================================= */
+
+.fileInput {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   PHOTO PREVIEW
+========================================================= */
+
+.preview {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+/* =========================================================
+   SAVE BUTTON
+   FIGMA DESKTOP:
+   328 × 38
+   Radius: 64px
+========================================================= */
+
+.saveButton {
+    width: 328px;
+    height: 38px;
+
+    min-width: 328px;
+    min-height: 38px;
+
+    margin: 18px 0 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dbe7e1;
+    border-radius: 64px;
+
+    background: #aec7bb;
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+.saveButton:hover:not(:disabled) {
+    background: #aec7bb;
+}
+
+.saveButton:disabled {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.saveButtonActive {
+    background: #679b82;
+}
+
+.saveButtonActive:hover:not(:disabled) {
+    background: #679b82;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.error {
+    width: 100%;
+
+    margin: 7px 0 0;
+    padding: 0;
+
+    color: #c94a4a;
+
+    font-size: 11px;
+    line-height: 14px;
+
+    text-align: center;
+}
+
+/* =========================================================
+   TABLET
+   FIGMA: 522 × 354
+========================================================= */
+
+@media (min-width: 768px) and (max-width: 1439px) {
+    .card {
+        width: 522px;
+        height: 354px;
+
+        padding: 37px 32px 0;
+    }
+
+    .saveButton {
+        width: 458px;
+        min-width: 458px;
+
+        height: 38px;
+        min-height: 38px;
+    }
+}
+
+/* =========================================================
+   MOBILE
+   FIGMA: 360 × 322
+========================================================= */
+
+@media (max-width: 767px) {
+    .wrapper {
+        width: 100%;
+    }
+
+    .card {
+        width: 360px;
+        max-width: calc(100vw - 32px);
+
+        height: 322px;
+
+        padding: 28px 24px 0;
+
+        border-radius: 28px;
+    }
+
+    .closeButton {
+        top: 13px;
+        right: 13px;
+
+        width: 16px;
+        height: 16px;
+    }
+
+    .closeButton span {
+        top: 7px;
+        left: 2px;
+
+        width: 12px;
+    }
+
+    .title {
+        font-size: 20px;
+        line-height: 24px;
+    }
+
+    .photoButton {
+        width: 80px;
+        height: 80px;
+
+        min-width: 80px;
+        min-height: 80px;
+
+        margin-top: 10px;
+    }
+
+    .cameraIcon {
+        width: 43px;
+        height: 43px;
+    }
+
+    .saveButton {
+        width: 100%;
+        min-width: 0;
+
+        height: 34px;
+        min-height: 34px;
+
+        margin-top: 14px;
+
+        border-radius: 64px;
+
+        font-size: 10px;
+    }
+
+    .error {
+        font-size: 9px;
+        line-height: 12px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 359px) {
+    .card {
+        width: calc(100vw - 20px);
+        max-width: calc(100vw - 20px);
+    }
+
+    .saveButton {
+        width: 100%;
+    }
+}

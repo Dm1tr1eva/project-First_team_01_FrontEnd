@@ -1,0 +1,515 @@
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.page {
+    width: 100%;
+    min-height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CARD
+   Figma desktop:
+   392 × 354
+   padding: 48px 32px
+   border-radius: 32px
+   ========================================================= */
+
+.card {
+    position: relative;
+
+    width: 392px;
+    height: 354px;
+
+    box-sizing: border-box;
+
+    padding: 48px 32px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 20px;
+
+    background: #d1e0d8;
+
+    border-radius: 32px;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.closeButton {
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    width: 24px;
+    height: 24px;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    z-index: 10;
+}
+
+.closeIcon {
+    width: 24px;
+    height: 24px;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* =========================================================
+   TITLE
+   Figma:
+   328 × 44
+   Manrope 700
+   32px
+   ========================================================= */
+
+.title {
+    width: 328px;
+    height: 44px;
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 32px;
+    line-height: 44px;
+    font-weight: 700;
+
+    color: #070721;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.form {
+    width: 328px;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CAMERA AREA
+   Figma:
+   136 × 136
+   ========================================================= */
+
+.uploadArea {
+    position: relative;
+
+    width: 136px;
+    height: 136px;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: row;
+
+    gap: 0;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   GREEN CAMERA CIRCLE
+   Figma:
+   width: 136px
+   height: 136px
+   padding: 14px 0 0
+   border-radius: 128px
+   background: #649179
+   ========================================================= */
+
+.cameraCircle {
+    width: 136px;
+    height: 136px;
+
+    box-sizing: border-box;
+
+    margin: 0;
+    padding: 14px 0 0;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: row;
+
+    gap: 0;
+
+    border-radius: 128px;
+
+    background: #649179;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   CAMERA SVG
+   Figma SVG:
+   116 × 97
+   ========================================================= */
+
+.cameraIcon {
+    width: 116px;
+    height: 97px;
+
+    display: block;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   FILE INPUT
+   ========================================================= */
+
+.fileInput {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    opacity: 0;
+
+    cursor: pointer;
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   PHOTO PREVIEW
+   ========================================================= */
+
+.previewWrapper {
+    width: 136px;
+    height: 136px;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #649179;
+
+    flex-shrink: 0;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+   Figma desktop:
+   328 × 38
+   padding: 8px
+   gap: 8px
+   border-radius: 64px
+
+   shadow:
+   0 0 0 6px rgba(78, 70, 180, 0.12),
+   0 0 0 2px #fff
+
+   background:
+   #649179
+
+   opacity:
+   0.3
+   ========================================================= */
+
+.submitButton {
+    width: 328px;
+    height: 38px;
+
+    box-sizing: border-box;
+
+    margin: 0;
+    padding: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+
+    gap: 8px;
+
+    border: none;
+    border-radius: 64px;
+
+    background: #649179;
+
+    opacity: 0.3;
+
+    box-shadow:
+        0 0 0 6px rgba(78, 70, 180, 0.12),
+        0 0 0 2px #fff;
+
+    color: #ffffff;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.submitButton:hover {
+    opacity: 0.35;
+}
+
+.submitButton:disabled {
+    cursor: default;
+}
+
+.submitButton:active {
+    transform: scale(0.99);
+}
+
+
+/* =========================================================
+   ERRORS
+   ========================================================= */
+
+.error {
+    width: 328px;
+
+    margin: -8px 0 0;
+    padding: 0;
+
+    color: #b23a48;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 12px;
+    line-height: 16px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .card {
+        width: 522px;
+        height: 354px;
+
+        padding: 48px 32px;
+
+        border-radius: 32px;
+    }
+
+    .title {
+        width: 458px;
+    }
+
+    .form {
+        width: 458px;
+    }
+
+    .submitButton {
+        width: 458px;
+    }
+
+    .error {
+        width: 458px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+    .page {
+        width: 100%;
+
+        min-height: 100vh;
+
+        padding: 0 16px;
+
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 360px;
+
+        height: 322px;
+
+        padding: 40px 16px;
+
+        border-radius: 32px;
+
+        gap: 16px;
+    }
+
+    .closeButton {
+        top: 16px;
+        right: 16px;
+
+        width: 20px;
+        height: 20px;
+    }
+
+    .closeIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .title {
+        width: 100%;
+        height: 32px;
+
+        font-size: 24px;
+        line-height: 32px;
+    }
+
+    .form {
+        width: 100%;
+
+        gap: 16px;
+    }
+
+    .uploadArea {
+        width: 120px;
+        height: 120px;
+    }
+
+    .cameraCircle {
+        width: 120px;
+        height: 120px;
+
+        padding: 12px 0 0;
+
+        border-radius: 128px;
+    }
+
+    .cameraIcon {
+        width: 102px;
+        height: auto;
+    }
+
+    .previewWrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .submitButton {
+        width: 100%;
+        height: 38px;
+
+        min-width: 0;
+    }
+
+    .error {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 360px) {
+    .page {
+        padding: 0 16px;
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .title {
+        font-size: 23px;
+    }
+}
+
