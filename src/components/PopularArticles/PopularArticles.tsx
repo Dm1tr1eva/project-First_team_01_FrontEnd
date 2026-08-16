@@ -6,7 +6,6 @@ import type { ComponentType, Ref } from "react";
 import { useMemo, useState } from "react";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Loader from "@/components/Loader/Loader";
-import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import { getArticlesFiltered, getSavedArticles, getUserInfo } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import type { Article } from "@/types/article";
@@ -15,6 +14,7 @@ import css from "./PopularArticles.module.css";
 const POPULAR_ARTICLES_LIMIT = 4;
 const BACKEND_MIN_PAGE_SIZE = 5;
 const FALLBACK_ERROR_MESSAGE = "We could not load popular articles. Please try again.";
+const EMPTY_GUEST_HANDLER = () => undefined;
 
 type PopularArticlesResponse = {
   articles: Article[];
@@ -48,6 +48,10 @@ interface ArticlesListIntegrationProps {
   onSavedArticlesChange: (savedArticleIds: string[]) => void;
   scrollTargetId: string | null;
   scrollTargetRef: Ref<HTMLLIElement>;
+}
+
+interface PopularArticlesProps {
+  onGuestClick?: () => void;
 }
 
 const IntegratedArticlesList = ArticlesList as ComponentType<ArticlesListIntegrationProps>;
@@ -93,10 +97,11 @@ async function fetchPopularArticles(): Promise<PopularArticlesResponse> {
   };
 }
 
-export default function PopularArticles() {
+export default function PopularArticles({
+  onGuestClick = EMPTY_GUEST_HANDLER,
+}: PopularArticlesProps) {
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
-  const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const userId = useAuthStore((state) => state.user?.id);
 
   const { data: savedArticles } = useQuery({
@@ -126,10 +131,6 @@ export default function PopularArticles() {
     if (userId) {
       setSavedArticleIdsOverride({ userId, articleIds });
     }
-  };
-
-  const handleGuestSaveAttempt = () => {
-    setIsErrorSaveOpen(true);
   };
 
   const errorMessage = error instanceof Error ? error.message : FALLBACK_ERROR_MESSAGE;
@@ -175,7 +176,7 @@ export default function PopularArticles() {
               articles={data?.articles ?? []}
               authorNames={data?.authorNames ?? {}}
               savedArticleIds={savedArticleIds}
-              onGuestClick={handleGuestSaveAttempt}
+              onGuestClick={onGuestClick}
               onSavedArticlesChange={handleSavedArticlesChange}
               scrollTargetId={null}
               scrollTargetRef={null}
@@ -183,8 +184,6 @@ export default function PopularArticles() {
           </div>
         )}
       </div>
-
-      {isErrorSaveOpen && <ModalErrorSave onClose={() => setIsErrorSaveOpen(false)} />}
     </section>
   );
 }

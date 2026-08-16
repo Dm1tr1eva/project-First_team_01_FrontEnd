@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ArticleFilter, { type ArticlesFilterValue } from "@/components/ArticleFilter/ArticleFilter";
 import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
-import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import Pagination from "@/components/Pagination/Pagination";
 import SectionTitle from "@/components/SectionTitle/SectionTitle";
 import {
@@ -83,7 +82,6 @@ export default function ArticlesPage() {
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
   const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
-  const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -178,9 +176,7 @@ export default function ArticlesPage() {
     }
   };
 
-  const handleGuestSaveAttempt = () => {
-    setIsErrorSaveOpen(true);
-  };
+  const handleGuestSaveAttempt = () => undefined;
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
     if (userId) {
@@ -264,8 +260,6 @@ export default function ArticlesPage() {
           </span>
         )}
       </section>
-
-      {isErrorSaveOpen && <ModalErrorSave onClose={() => setIsErrorSaveOpen(false)} />}
     </div>
   );
 }
