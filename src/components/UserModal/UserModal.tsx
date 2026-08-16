@@ -2,8 +2,9 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/lib/store/authStore"; 
-import { updateUser } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
+import { updateUser, updateAvatar } from "@/lib/api/clientApi";
+import { CameraIcon, PencilIcon, CloseIcon } from "./Icons";
 import css from "./UserModal.module.css";
 
 interface UserModalProps {
@@ -15,10 +16,10 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
   const router = useRouter();
 
   const user = useAuthStore((state) => state.user);
-  const updateUserInStore = useAuthStore((state) => state.setUser || state.updateUser);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const [name, setName] = useState<string>("");
-  const [avatarPreview, setAvatarPreview] = useState<string>("/default-avatar.png");
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [errorName, setErrorName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,37 +27,29 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
   useEffect(() => {
     if (user) {
       setName(user.name || "");
-      setAvatarPreview(user.avatarUrl || user.avatar || "/default-avatar.png");
+      setAvatarPreview(user.avatarUrl || "");
     }
   }, [user, isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
+      if (e.key === "Escape") onClose();
     };
-
-    if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
+    if (isOpen) window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    if (e.target === e.currentTarget) onClose();
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setAvatarFile(file);
-      const previewUrl = URL.createObjectURL(file);
-      setAvatarPreview(previewUrl);
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -68,81 +61,78 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
       setErrorName("Name is required");
       return;
     }
-    if (name.trim().length < 2) {
-      setErrorName("Name must be at least 2 characters long");
-      return;
-    }
 
     try {
       setIsLoading(true);
 
-      const formData = new FormData();
-      formData.append("name", name.trim());
+      let updatedUserData = await updateUser({ name: name.trim() });
+
       if (avatarFile) {
-        formData.append("avatar", avatarFile);
+        const avatarResponse = await updateAvatar(avatarFile);
+
+        updatedUserData = { ...updatedUserData, avatarUrl: avatarResponse.avatarUrl };
       }
 
-      const updatedUser = await updateUser(formData);
-
-      if (updateUserInStore && updatedUser) {
-        updateUserInStore(updatedUser);
+      if (setUser && updatedUserData) {
+        setUser(updatedUserData);
       }
 
       onClose();
       router.refresh();
     } catch (err: any) {
-      setErrorName(err?.response?.data?.message || err?.message || "Failed to update profile");
+      setErrorName(err?.response?.data?.message || err?.message || "Error updating profile");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const isFormValid = name.trim().length >= 2;
+
   return (
     <div className={css.backdrop} onClick={handleBackdropClick}>
-      <div className={css.container}>
+      <div className={`${css.container} ${avatarPreview ? css.containerHasPhoto : ""}`}>
 
         <button type="button" className={css.closeButton} onClick={onClose} aria-label="Close">
-          ✕
+          <CloseIcon />
         </button>
 
-        <h3 className={css.title}>Edit Profile</h3>
+        <h2 className={css.title}>Edit profile</h2>
 
         <form onSubmit={handleSubmit} className={css.form}>
 
-          <div className={css.avatarWrapper}>
-            <img src={avatarPreview} alt="User Avatar" className={css.avatarImg} />
-            <label className={css.avatarLabel}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className={css.fileInput}
-              />
-              <span className={css.uploadBadge}>+</span>
+          {avatarPreview ? (
+            <label className={css.filledAvatarWrapper} title="Change photo">
+              <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
+              <img src={avatarPreview} alt="Avatar" className={css.avatarImg} />
+              <div className={css.editOverlay}>
+                <PencilIcon />
+              </div>
             </label>
-          </div>
+          ) : (
+            <label className={css.emptyAvatarCircle} title="Upload photo">
+              <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
+              <CameraIcon />
+            </label>
+          )}
 
-          <div className={css.inputGroup}>
-            <label className={css.label}>User Name</label>
+          <div className={css.inputWrapper}>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className={`${css.input} ${errorName ? css.inputError : ""}`}
-              placeholder="Enter your name"
+              className={`${css.nameInput} ${errorName ? css.inputError : ""}`}
+              placeholder="Your name"
             />
-
             {errorName && <span className={css.errorMessage}>{errorName}</span>}
           </div>
 
-          <div className={css.containerButtons}>
-            <button type="submit" className={css.buttonSave} disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save changes"}
-            </button>
-            <button type="button" className={css.buttonCancel} onClick={onClose}>
-              Cancel
-            </button>
-          </div>
+          <button
+            type="submit"
+            className={`${css.saveButton} ${!isFormValid || isLoading ? css.saveButtonDisabled : ""}`}
+            disabled={!isFormValid || isLoading}
+          >
+            {isLoading ? "Saving..." : "Save"}
+          </button>
         </form>
       </div>
     </div>
