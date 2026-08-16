@@ -5,6 +5,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
+import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import EditArticleButton from "@/components/EditArticleButton/EditArticleButton";
 import Loader from "@/components/Loader/Loader";
@@ -148,7 +149,7 @@ export default function MyArticlesTab() {
   }
 
   if (articles.length === 0) {
-    return <p className={css.message}>You haven&apos;t published any articles yet.</p>;
+    return <ArticlesEmptyState description="Write your first article" />;
   }
 
   return (
