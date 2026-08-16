@@ -1,15 +1,15 @@
 /* =========================================================
-   UPLOAD FORM — FIGMA
-   Desktop: 392 × 354
-   Tablet:  522 × 354
-   Mobile:  360 × 322
+   WRAPPER — центрує картку на сторінці
 ========================================================= */
 
 .wrapper {
     width: 100%;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 /* =========================================================
@@ -26,7 +26,7 @@
 
     box-sizing: border-box;
 
-    padding: 37px 32px 0;
+    padding: 48px 32px;
 
     background: #d1e0d8;
     border-radius: 32px;
@@ -34,6 +34,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
 }
 
 /* =========================================================
@@ -43,11 +45,11 @@
 .closeButton {
     position: absolute;
 
-    top: 15px;
-    right: 15px;
+    top: 20px;
+    right: 20px;
 
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
 
     padding: 0;
     border: 0;
@@ -55,28 +57,19 @@
     background: transparent;
 
     cursor: pointer;
+
+    z-index: 10;
 }
 
-.closeButton span {
-    position: absolute;
-
-    top: 8px;
-    left: 2px;
-
-    width: 14px;
-    height: 1px;
-
-    background: #7b8984;
-
-    border-radius: 1px;
+.closeIcon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    color: #7b8984;
 }
 
-.closeButton span:first-child {
-    transform: rotate(45deg);
-}
-
-.closeButton span:last-child {
-    transform: rotate(-45deg);
+.closeButton:hover .closeIcon {
+    color: #5a6b65;
 }
 
 /* =========================================================
@@ -84,18 +77,22 @@
 ========================================================= */
 
 .title {
-    width: 100%;
+    width: 328px;
+    height: 44px;
 
     margin: 0;
     padding: 0;
 
-    color: #10162b;
+    color: #070721;
 
-    font-size: 24px;
-    line-height: 29px;
+    font-family: "Manrope", sans-serif;
+    font-size: 32px;
+    line-height: 44px;
     font-weight: 700;
 
     text-align: center;
+
+    white-space: nowrap;
 }
 
 /* =========================================================
@@ -103,7 +100,7 @@
 ========================================================= */
 
 .form {
-    width: 100%;
+    width: 328px;
 
     margin: 0;
     padding: 0;
@@ -111,60 +108,71 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    gap: 20px;
+
+    box-sizing: border-box;
 }
 
 /* =========================================================
-   PHOTO / CAMERA
+   CAMERA AREA
 ========================================================= */
 
-.photoButton {
+.uploadArea {
     position: relative;
 
-    width: 90px;
-    height: 90px;
+    width: 136px;
+    height: 136px;
 
-    min-width: 90px;
-    min-height: 90px;
-
-    margin: 10px 0 0;
+    margin: 0;
     padding: 0;
 
-    border: 0;
-    border-radius: 50%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
 
-    background: #679b82;
+    box-sizing: border-box;
+
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   GREEN CAMERA CIRCLE
+========================================================= */
+
+.cameraCircle {
+    width: 136px;
+    height: 136px;
+
+    box-sizing: border-box;
+
+    margin: 0;
+    padding: 0;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    overflow: hidden;
+    border-radius: 128px;
 
-    box-sizing: border-box;
+    background: #649179;
 
-    cursor: pointer;
-}
-
-.photoButton:hover {
-    transform: none;
-}
-
-.photoButton:focus-visible {
-    outline: 2px solid #315e4d;
-    outline-offset: 3px;
+    flex-shrink: 0;
 }
 
 /* =========================================================
-   CAMERA ICON
+   CAMERA SVG
 ========================================================= */
 
 .cameraIcon {
-    width: 48px;
-    height: 48px;
+    width: 71px;
+    height: 60px;
 
     display: block;
 
-    color: #244c3d;
+    object-fit: contain;
+
+    flex-shrink: 0;
 }
 
 /* =========================================================
@@ -179,203 +187,216 @@
     width: 100%;
     height: 100%;
 
+    margin: 0;
+    padding: 0;
+
     opacity: 0;
 
     cursor: pointer;
+
+    z-index: 5;
 }
 
 /* =========================================================
    PHOTO PREVIEW
 ========================================================= */
 
-.preview {
-    position: absolute;
+.previewWrapper {
+    position: relative;
 
-    inset: 0;
+    width: 136px;
+    height: 136px;
 
-    width: 100%;
-    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
 
     border-radius: 50%;
 
-    overflow: hidden;
+    background: #649179;
+
+    flex-shrink: 0;
 }
 
 .previewImage {
-    width: 100%;
-    height: 100%;
-
     object-fit: cover;
 }
 
 /* =========================================================
    SAVE BUTTON
-   FIGMA DESKTOP:
-   328 × 38
-   Radius: 64px
 ========================================================= */
 
-.saveButton {
+.submitButton {
     width: 328px;
     height: 38px;
 
-    min-width: 328px;
-    min-height: 38px;
-
-    margin: 18px 0 0;
-    padding: 0;
-
     box-sizing: border-box;
 
-    border: 1px solid #dbe7e1;
-    border-radius: 64px;
-
-    background: #aec7bb;
-
-    color: #ffffff;
-
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 400;
-    line-height: 1;
+    margin: 0;
+    padding: 8px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    cursor: pointer;
-}
+    flex-direction: row;
+    gap: 8px;
 
-.saveButton:hover:not(:disabled) {
-    background: #aec7bb;
-}
+    border: none;
+    border-radius: 64px;
 
-.saveButton:disabled {
-    opacity: 1;
-    cursor: pointer;
-}
+    background: #649179;
 
-.saveButtonActive {
-    background: #679b82;
-}
+    opacity: 0.3;
 
-.saveButtonActive:hover:not(:disabled) {
-    background: #679b82;
-}
+    box-shadow:
+        0 0 0 6px rgba(78, 70, 180, 0.12),
+        0 0 0 2px #fff;
 
-/* =========================================================
-   ERROR
-========================================================= */
+    color: #ffffff;
 
-.error {
-    width: 100%;
+    font-family: "Manrope", sans-serif;
 
-    margin: 7px 0 0;
-    padding: 0;
-
-    color: #c94a4a;
-
-    font-size: 11px;
-    line-height: 14px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
 
     text-align: center;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+
+    transition:
+        background 200ms ease,
+        opacity 200ms ease;
+}
+
+.submitButtonActive {
+    background: #649179;
+    opacity: 1;
+    box-shadow: none;
+}
+
+.submitButtonActive:hover {
+    background: #374f42;
+}
+
+.submitButton:disabled {
+    cursor: wait;
 }
 
 /* =========================================================
    TABLET
-   FIGMA: 522 × 354
 ========================================================= */
 
-@media (min-width: 768px) and (max-width: 1439px) {
+@media (min-width: 768px) and (max-width: 1199px) {
     .card {
         width: 522px;
         height: 354px;
 
-        padding: 37px 32px 0;
+        padding: 48px 32px;
     }
 
-    .saveButton {
+    .title {
         width: 458px;
-        min-width: 458px;
+        height: 44px;
+    }
 
-        height: 38px;
-        min-height: 38px;
+    .form {
+        width: 458px;
+    }
+
+    .submitButton {
+        width: 458px;
     }
 }
 
 /* =========================================================
    MOBILE
-   FIGMA: 360 × 322
 ========================================================= */
 
 @media (max-width: 767px) {
     .wrapper {
-        width: 100%;
+        padding: 16px;
+        min-height: 100vh;
     }
 
     .card {
-        width: 360px;
-        max-width: calc(100vw - 32px);
+        width: 100%;
+        max-width: 360px;
 
         height: 322px;
 
-        padding: 28px 24px 0;
+        padding: 40px 16px;
 
         border-radius: 28px;
+
+        gap: 16px;
     }
 
     .closeButton {
-        top: 13px;
-        right: 13px;
+        top: 16px;
+        right: 16px;
 
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
     }
 
-    .closeButton span {
-        top: 7px;
-        left: 2px;
-
-        width: 12px;
+    .closeIcon {
+        width: 20px;
+        height: 20px;
     }
 
     .title {
-        font-size: 20px;
-        line-height: 24px;
+        width: 100%;
+        height: 32px;
+
+        font-size: 24px;
+        line-height: 32px;
+
+        white-space: normal;
     }
 
-    .photoButton {
-        width: 80px;
-        height: 80px;
+    .form {
+        width: 100%;
 
-        min-width: 80px;
-        min-height: 80px;
+        gap: 16px;
+    }
 
-        margin-top: 10px;
+    .uploadArea {
+        width: 120px;
+        height: 120px;
+    }
+
+    .cameraCircle {
+        width: 120px;
+        height: 120px;
+
+        padding: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .cameraIcon {
-        width: 43px;
-        height: 43px;
+        width: 71px;
+        height: 60px;
     }
 
-    .saveButton {
+    .previewWrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .submitButton {
         width: 100%;
-        min-width: 0;
+        height: 38px;
 
-        height: 34px;
-        min-height: 34px;
-
-        margin-top: 14px;
-
-        border-radius: 64px;
-
-        font-size: 10px;
-    }
-
-    .error {
-        font-size: 9px;
-        line-height: 12px;
+        font-size: 12px;
+        line-height: 18px;
     }
 }
 
@@ -383,13 +404,40 @@
    SMALL MOBILE
 ========================================================= */
 
-@media (max-width: 359px) {
-    .card {
-        width: calc(100vw - 20px);
-        max-width: calc(100vw - 20px);
+@media (max-width: 360px) {
+    .wrapper {
+        padding: 12px;
     }
 
-    .saveButton {
-        width: 100%;
+    .card {
+        max-width: 100%;
+        padding: 32px 16px;
+        height: auto;
+        min-height: 322px;
+    }
+
+    .title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+
+    .cameraCircle {
+        width: 100px;
+        height: 100px;
+    }
+
+    .cameraIcon {
+        width: 60px;
+        height: 50px;
+    }
+
+    .previewWrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .submitButton {
+        height: 34px;
+        font-size: 11px;
     }
 }
