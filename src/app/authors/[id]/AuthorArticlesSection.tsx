@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 import { ARTICLES_PER_PAGE } from "./constants";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
+import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
 import { useCurrentUserId } from "@/hooks/useCurrentUser";
@@ -48,6 +49,7 @@ export default function AuthorArticlesSection({
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
   const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
+  const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
 
   // Раніше: useAuthStore((state) => state.user?.id) — бекенд реально
@@ -117,9 +119,7 @@ export default function AuthorArticlesSection({
     }
   };
 
-  const handleGuestSaveAttempt = () => {
-    toast.error("Please log in to save articles");
-  };
+  const handleGuestSaveAttempt = () => setIsErrorSaveOpen(true);
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
     if (currentUserId) {
@@ -167,6 +167,8 @@ export default function AuthorArticlesSection({
         isLoading={isFetchingNextPage}
         onLoadMore={handleLoadMore}
       />
+
+      {isErrorSaveOpen && <ModalErrorSave onClose={() => setIsErrorSaveOpen(false)} />}
     </div>
   );
 }
