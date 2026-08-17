@@ -9,9 +9,8 @@ import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptySta
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
-import { getSavedArticles, getUserInfo } from "@/lib/api/clientApi";
 import { useCurrentUserId } from "../useCurrentUserId";
-import type { Article } from "@/types/article";
+import { fetchSavedArticlesWithAuthors, savedArticlesQueryKey } from "../savedArticlesQuery";
 import css from "./default.module.css";
 
 const ARTICLES_PER_PAGE = 12;
@@ -25,39 +24,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-async function fetchSavedArticlesWithAuthors(): Promise<{
-  articles: Article[];
-  authorNames: Record<string, string>;
-}> {
-  const articles = await getSavedArticles();
-
-  const embeddedAuthorEntries = articles.flatMap((article) =>
-    article.ownerId === null || typeof article.ownerId === "string"
-      ? []
-      : ([[article.ownerId._id, article.ownerId.name]] as const),
-  );
-  const ownerIdsToResolve = [
-    ...new Set(
-      articles.flatMap((article) => (typeof article.ownerId === "string" ? [article.ownerId] : [])),
-    ),
-  ];
-  const fetchedAuthorEntries = await Promise.all(
-    ownerIdsToResolve.map(async (ownerId) => {
-      try {
-        const author = await getUserInfo(ownerId);
-        return [ownerId, author.name] as const;
-      } catch {
-        return [ownerId, "Unknown author"] as const;
-      }
-    }),
-  );
-
-  return {
-    articles,
-    authorNames: Object.fromEntries([...embeddedAuthorEntries, ...fetchedAuthorEntries]),
-  };
-}
-
 export default function SavedArticlesTab() {
   const currentUserId = useCurrentUserId();
 
@@ -67,7 +33,7 @@ export default function SavedArticlesTab() {
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
 
   const { data, error, isError, isPending } = useQuery({
-    queryKey: ["saved-articles-full", currentUserId],
+    queryKey: savedArticlesQueryKey(currentUserId),
     queryFn: fetchSavedArticlesWithAuthors,
     enabled: Boolean(currentUserId),
   });
@@ -107,8 +73,6 @@ export default function SavedArticlesTab() {
     toast.error("Please log in to save articles");
   };
 
-  // На цій вкладці всі показані статті за визначенням "збережені", тож коли юзер
-  // прибирає закладку прямо тут — статтю варто одразу прибрати зі списку.
   const handleSavedArticlesChange = (articleIds: string[]) => {
     const stillSavedIds = new Set(articleIds);
     setRemovedArticleIds((previous) => {
