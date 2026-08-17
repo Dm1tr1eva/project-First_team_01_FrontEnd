@@ -6,7 +6,8 @@
 
 .container {
   max-width: 393px;
-  padding-block: 36px;
+  margin-bottom: 72px;
+  padding: 0;
 }
 
 .headingRow {

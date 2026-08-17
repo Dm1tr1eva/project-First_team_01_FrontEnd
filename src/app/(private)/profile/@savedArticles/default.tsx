@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
+import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
@@ -141,7 +142,13 @@ export default function SavedArticlesTab() {
   }
 
   if (allArticles.length === 0) {
-    return <p className={css.message}>You don&apos;t have any saved articles yet.</p>;
+    return (
+      <ArticlesEmptyState
+        description="Save your first article"
+        actionLabel="Go to articles"
+        actionHref="/articles"
+      />
+    );
   }
 
   return (
