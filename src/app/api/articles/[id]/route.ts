@@ -29,9 +29,16 @@ export async function PATCH(request: NextRequest, { params }: Context) {
   const title = formData.get("title");
   const article = formData.get("article");
 
-  if (!title || !article) {
+ if (title !== null && typeof title === "string" && title.trim() === "") {
     return NextResponse.json(
-      { message: "title and article are required" },
+      { message: "Title cannot be empty" },
+      { status: 400 }
+    );
+ }
+  
+  if (article !== null && typeof article === "string" && article.trim() === "") {
+    return NextResponse.json(
+      { message: "Article cannot be empty" },
       { status: 400 }
     );
   }
