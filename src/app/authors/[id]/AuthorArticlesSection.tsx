@@ -52,11 +52,6 @@ export default function AuthorArticlesSection({
   const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
 
-  // Раніше: useAuthStore((state) => state.user?.id) — бекенд реально
-  // повертає "_id", а не "id", тому currentUserId завжди був undefined,
-  // запит на збережені статті ніколи не робився, і кнопка Save завжди
-  // показувала "не збережено" навіть для вже збережених статей. Детальніше
-  // в коментарі src/hooks/useCurrentUser.ts.
   const currentUserId = useCurrentUserId();
 
   const { data: savedArticles } = useQuery({

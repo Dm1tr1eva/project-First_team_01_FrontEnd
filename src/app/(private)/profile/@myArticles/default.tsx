@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -40,6 +41,7 @@ function getUniqueArticles(pages: { articles: Article[] }[]): Article[] {
 }
 
 export default function MyArticlesTab() {
+  const router = useRouter();
   const { data: currentUser } = useCurrentUser();
   const currentUserId = currentUser?.id;
 
@@ -112,15 +114,9 @@ export default function MyArticlesTab() {
     toast.error("Please log in to save articles");
   };
 
-  // На "My Articles" замінюємо стандартну bookmark-кнопку на EditArticleButton —
-  // юзер не має "зберігати в закладки" власні статті, натомість редагує їх.
-  // Заглушка: сторінки/форми редагування статті ще не існує в жодній гілці
-  // (не наша зона відповідальності і не входить у поточний фідбек тімліда
-  // по /profile), тож onClick поки що просто повідомляє про майбутню фічу,
-  // а не веде на неперевірений/неіснуючий маршрут. Замінити на router.push
-  // до реального шляху, коли сторінка редагування буде готова й змержена.
-  const handleEdit = () => {
-    toast("Editing articles is coming soon");
+
+  const handleEdit = (articleId: string) => {
+    router.push(`/articles/${articleId}/edit`);
   };
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
@@ -165,7 +161,7 @@ export default function MyArticlesTab() {
         renderAction={(article) => (
           <EditArticleButton
             articleTitle={article.title}
-            onClick={handleEdit}
+            onClick={() => handleEdit(article._id)}
           />
         )}
       />
