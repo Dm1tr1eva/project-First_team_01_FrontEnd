@@ -1,7 +1,6 @@
 import api from "./browserApi";
-
 import type { User, AuthUser, GetMeResponse } from "@/types/user";
-import type { Article, ArticlesListResponse, Category } from "@/types/article";
+import type { Article, ArticlesListResponse, Category, CreateArticleRequest, UpdateArticleRequest } from "@/types/article";
 import axios from "axios";
 
 // --- auth ---
@@ -39,6 +38,26 @@ export async function updateAvatar(file: File): Promise<{ avatarUrl: string }> {
   const formData = new FormData();
   formData.append("avatar", file);
   const { data } = await api.patch<{ avatarUrl: string }>("/users/me/avatar", formData);
+  return data;
+}
+
+export type GetUsersResponse = {
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  users: User[];
+};
+
+export async function getUsers(
+  params: {
+    page?: number;
+    perPage?: number;
+    sortBy?: "name" | "articlesAmount" | "createdAt" | "rating";
+    order?: "asc" | "desc";
+  } = {},
+): Promise<GetUsersResponse> {
+  const { data } = await api.get<GetUsersResponse>("/users", { params });
   return data;
 }
 
@@ -109,18 +128,10 @@ export async function getArticleById(id: string): Promise<Article> {
   return data.article;
 }
 
-export type CreateArticleRequest = {
-  title: string;
-  desc: string;
-  article: string;
-  category?: Category;
-  img: File;
-};
 
 export async function createArticle(payload: CreateArticleRequest): Promise<Article> {
   const formData = new FormData();
   formData.append("title", payload.title);
-  formData.append("desc", payload.desc);
   formData.append("article", payload.article);
   if (payload.category) formData.append("category", payload.category);
   formData.append("img", payload.img);
@@ -128,8 +139,6 @@ export async function createArticle(payload: CreateArticleRequest): Promise<Arti
   const { data } = await api.post<{ data: Article }>("/articles", formData);
   return data.data;
 }
-
-export type UpdateArticleRequest = Partial<Omit<CreateArticleRequest, "img">> & { img?: File };
 
 export async function updateArticle(id: string, payload: UpdateArticleRequest): Promise<Article> {
   const formData = new FormData();
