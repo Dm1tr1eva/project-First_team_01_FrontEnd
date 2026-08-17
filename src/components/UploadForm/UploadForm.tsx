@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 
 import { updateAvatar } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 
 import styles from "./UploadForm.module.css";
 
@@ -28,6 +29,7 @@ const validationSchema = Yup.object({
 
 export const UploadForm = () => {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
 
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -45,7 +47,12 @@ export const UploadForm = () => {
       }
 
       try {
-        await updateAvatar(values.photo);
+        const response = await updateAvatar(values.photo);
+
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser && response?.avatarUrl) {
+          setUser({ ...currentUser, avatarUrl: response.avatarUrl });
+        }
 
         toast.success("Photo uploaded successfully");
         router.push("/");
@@ -101,7 +108,7 @@ export const UploadForm = () => {
   const hasPhoto = Boolean(formik.values.photo);
 
   return (
-    <div className={styles.wrapper}>  {/* ← ОСЬ ТУТ wrapper! */}
+    <div className={styles.wrapper}>
       <section className={styles.card}>
         <button
           type="button"
@@ -112,18 +119,10 @@ export const UploadForm = () => {
           <svg
             width="24"
             height="24"
-            viewBox="0 0 24 24"
-            fill="none"
             className={styles.closeIcon}
             aria-hidden="true"
           >
-            <path
-              d="M18 6L6 18M6 6L18 18"
-              stroke="#7b8984"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <use href="/sprite.svg#iconcontrolsclose" />
           </svg>
         </button>
 
