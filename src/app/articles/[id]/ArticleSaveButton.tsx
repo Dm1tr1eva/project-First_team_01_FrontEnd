@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import ButtonAddToBookmarks from "@/components/ButtonAddToBookmarks/ButtonAddToBookmarks";
+import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import { useCurrentUserId } from "@/hooks/useCurrentUser";
 import { getSavedArticles } from "@/lib/api/clientApi";
 
@@ -25,6 +26,8 @@ export default function ArticleSaveButton({
     userId: undefined,
     articleIds: [],
   });
+
+  const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
 
   const { data: savedArticles } = useQuery({
     queryKey: ["saved-articles", userId],
@@ -51,14 +54,20 @@ export default function ArticleSaveButton({
   };
 
   return (
-    <ButtonAddToBookmarks
-      articleId={articleId}
-      isSaved={savedArticleIds.includes(articleId)}
-      variant="wide"
-      onGuestClick={() => {
-        // ModalErrorSave підключимо після завершення ArticlePage.
-      }}
-      onSavedArticlesChange={handleSavedArticlesChange}
-    />
+    <>
+      <ButtonAddToBookmarks
+        articleId={articleId}
+        isSaved={savedArticleIds.includes(articleId)}
+        variant="wide"
+        onGuestClick={() => setIsErrorSaveOpen(true)}
+        onSavedArticlesChange={handleSavedArticlesChange}
+      />
+
+      {isErrorSaveOpen && (
+        <ModalErrorSave
+          onClose={() => setIsErrorSaveOpen(false)}
+        />
+      )}
+    </>
   );
 }
