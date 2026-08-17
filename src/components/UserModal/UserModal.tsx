@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import Image from "next/image"; 
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store/authStore";
 import { updateUser, updateAvatar, deleteAvatar } from "@/lib/api/clientApi";
@@ -28,6 +29,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     if (user && isOpen) {
       setName(user.name || "");
       setAvatarPreview(user.avatarUrl || "");
+      setAvatarFile(null); 
       setErrorName("");
     }
   }, [user, isOpen]);
@@ -63,22 +65,33 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     const file = e.target.files?.[0];
     if (file) {
       setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleRemovePhoto = async () => {
     try {
       setIsLoading(true);
-      if (user?.avatarUrl) {
+
+      if (avatarFile) {
+        setAvatarFile(null);
+        setAvatarPreview(user?.avatarUrl || "");
+        return; 
+      }
+
+      if (user?.avatarUrl && avatarPreview === user.avatarUrl) {
         await deleteAvatar();
         if (setUser && user) {
           setUser({ ...user, avatarUrl: "" });
         }
+        setAvatarPreview("");
       }
 
-      setAvatarPreview("");
-      setAvatarFile(null);
       router.refresh();
     } catch (err: any) {
       setErrorName("Error deleting photo");
@@ -139,7 +152,13 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
           {avatarPreview ? (
             <label className={css.filledAvatarWrapper} title="Change photo">
               <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
-              <img src={avatarPreview} alt="Avatar" className={css.avatarImg} />
+              <Image 
+                src={avatarPreview} 
+                alt="Avatar" 
+                width={120} 
+                height={120} 
+                className={css.avatarImg} 
+              />
               <div className={css.editOverlay}>
                 <PencilIcon />
               </div>
