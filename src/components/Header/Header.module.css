@@ -35,11 +35,11 @@
   font-family: "Manrope", sans-serif;
   font-weight: 700;
   font-size: 12px;
-  color: #374f42;
+  color: #649179;
 }
 
 .headerLink:hover {
-  color: #15291e;
+  color: #374f42;
 }
 
 .navigation {
@@ -223,6 +223,17 @@
   border: none;
   padding: 0;
   display: block;
+  color: #649179;
+}
+.navBarMobButton:hover {
+  color: #374f42;
+}
+.userLogout {
+  color: #649179;
+}
+
+.userLogout:hover {
+  color: #374f42;
 }
 
 @media only screen and (min-width: 375px) {
