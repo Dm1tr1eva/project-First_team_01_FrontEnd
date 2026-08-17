@@ -5,11 +5,12 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import { createArticle } from '@/lib/api/clientApi';
+import { createArticle, updateArticle } from '@/lib/api/clientApi';
 import { createArticleSchema } from '@/lib/validation/createArticleSchema';
-import type { CreateArticleRequest } from '@/types/article';
 import { ArticleImagePicker } from '../ArticleImagePicker/ArticleImagePicker';
 import { useArticleDraftStore } from '@/lib/store/articleDraftStore';
+import { updateArticleSchema } from '@/lib/validation/updateArticleSchema';
+import { Article, CreateArticleRequest, UpdateArticleRequest } from '@/types/article';
 
 type FormValues = {
   title: string;
@@ -17,7 +18,13 @@ type FormValues = {
   img: File | null;
 };
 
-export default function AddArticleForm() {
+type Props = {
+  article?: Article;
+};
+
+export default function AddArticleForm({
+  article,
+}: Props) {
   const router = useRouter();
   const { draft, setDraft, clearDraft } =
   useArticleDraftStore();
@@ -26,17 +33,26 @@ export default function AddArticleForm() {
     mutationFn: createArticle,
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (payload: UpdateArticleRequest) =>
+      updateArticle(article!._id, payload),
+  });
+
+
+  const isEdit = !!article;
+
   const initialValues: FormValues = {
-  title: draft.title,
-  article: draft.article,
+  title: article?.title ?? draft.title,
+  article: article?.article ?? draft.article,
   img: null,
 };
 
   const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting }: { setSubmitting: (value: boolean) => void }
-  ) => {
-    try {
+  values: FormValues,
+  { setSubmitting }: { setSubmitting: (value: boolean) => void }
+) => {
+  try {
+    if (!isEdit) {
       const payload: CreateArticleRequest = {
         title: values.title,
         article: values.article,
@@ -51,18 +67,45 @@ export default function AddArticleForm() {
       clearDraft();
 
       router.push(`/articles/${createdArticle._id}`);
-    } catch (error) {
-      toast.error('Failed to create article');
-    } finally {
-      setSubmitting(false);
+
+      return;
     }
+    const payload: UpdateArticleRequest = {};
+
+    if (values.title !== article.title) {
+      payload.title = values.title;
+    }
+
+    if (values.article !== article.article) {
+      payload.article = values.article;
+    }
+
+    if (values.img) {
+      payload.img = values.img;
+    }
+
+    const updatedArticle =
+      await updateMutation.mutateAsync(payload);
+
+    toast.success('Article updated successfully');
+
+    router.push(`/articles/${updatedArticle._id}`);
+  } catch {
+    toast.error('Operation failed');
+  } finally {
+    setSubmitting(false);
+  }
   };
+  
+  const validationSchema = isEdit
+  ? updateArticleSchema
+  : createArticleSchema;
 
   return (
     <Formik
       enableReinitialize
       initialValues={initialValues}
-      validationSchema={createArticleSchema}
+      validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
       {({
@@ -76,6 +119,7 @@ export default function AddArticleForm() {
             <div className={css.imageBlock}>
               <ArticleImagePicker
                 file={values.img}
+                imageUrl={article?.img}
                 onChange={(file) => setFieldValue('img', file)}
               />
               <ErrorMessage
@@ -100,10 +144,12 @@ export default function AddArticleForm() {
                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                    handleChange(e);
 
-                   setDraft({
-                     title: e.target.value,
-                     article: values.article,
-                  });
+                   if (!isEdit) {
+                      setDraft({
+                      title: e.target.value,
+                      article: values.article,
+                   });
+                 }
                 }}
                  />
 
@@ -125,10 +171,12 @@ export default function AddArticleForm() {
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                   handleChange(e);
 
-                  setDraft({
-                  title: values.title,
-                  article: e.target.value,
+                  if (!isEdit) {
+                    setDraft({
+                    title: values.title,
+                    article: e.target.value,
                   });
+                  }
                 }}
                 />
 
@@ -145,12 +193,17 @@ export default function AddArticleForm() {
             type="submit"
             className={css.submitButton}
             disabled={
-              isSubmitting ||
-              createMutation.isPending
-            }
+  isSubmitting ||
+  createMutation.isPending ||
+  updateMutation.isPending
+}
           >
-            {createMutation.isPending ? 'Publishing...' : 'Publish Article'}
-          </button>
+{
+  createMutation.isPending ||
+  updateMutation.isPending
+    ? 'Publishing...'
+    : 'Publish Article'
+}          </button>
         </Form>
       )}
     </Formik>

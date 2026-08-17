@@ -6,10 +6,15 @@ import css from './ArticleImagePicker.module.css';
 
 type Props = {
   file: File | null;
+  imageUrl?: string;
   onChange: (file: File | null) => void;
 };
 
-export const ArticleImagePicker = ({ file, onChange }: Props) => {
+export const ArticleImagePicker = ({
+  file,
+  imageUrl,
+  onChange,
+}: Props) => {
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -42,12 +47,14 @@ export const ArticleImagePicker = ({ file, onChange }: Props) => {
     onChange(selectedFile);
   };
 
+  const imageSrc = previewUrl || imageUrl;
+
   return (
     <div className={css.imageBlock}>
       <label htmlFor="img" className={css.uploadLabel}>
-        {previewUrl ? (
+        {imageSrc ? (
           <Image
-            src={previewUrl}
+            src={imageSrc}
             alt="Preview"
             width={300}
             height={300}
@@ -75,3 +82,4 @@ export const ArticleImagePicker = ({ file, onChange }: Props) => {
     </div>
   );
 };
+
