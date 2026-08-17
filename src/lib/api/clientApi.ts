@@ -1,6 +1,12 @@
 import api from "./browserApi";
 import type { User, AuthUser, GetMeResponse } from "@/types/user";
-import type { Article, ArticlesListResponse, Category, CreateArticleRequest, UpdateArticleRequest } from "@/types/article";
+import type {
+  Article,
+  ArticlesListResponse,
+  Category,
+  CreateArticleRequest,
+  UpdateArticleRequest,
+} from "@/types/article";
 import axios from "axios";
 
 // --- auth ---
@@ -129,7 +135,6 @@ export async function getArticleById(id: string): Promise<Article> {
   return data.article;
 }
 
-
 export async function createArticle(payload: CreateArticleRequest): Promise<Article> {
   const formData = new FormData();
   formData.append("title", payload.title);
@@ -174,7 +179,15 @@ export const checkSession = async (): Promise<boolean> => {
     const { data } = await api.get("/auth/session");
 
     return data.success === true;
-  } catch {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      try {
+        await api.post("/auth/logout");
+      } catch {
+        // ничего
+      }
+    }
+
     return false;
   }
 };
