@@ -30,15 +30,16 @@ export async function getUserInfo(id: string): Promise<User> {
 }
 
 export async function updateUser(payload: { name?: string }): Promise<AuthUser> {
-  const { data } = await api.patch<AuthUser>("/users/me", payload);
-  return data;
+  const { data } = await api.patch<{ data: AuthUser }>("/users/me", payload);
+  return data.data;
 }
 
 export async function updateAvatar(file: File): Promise<{ avatarUrl: string }> {
   const formData = new FormData();
   formData.append("avatar", file);
-  const { data } = await api.patch<{ avatarUrl: string }>("/users/me/avatar", formData);
-  return data;
+
+  const { data } = await api.patch<{ data: { avatarUrl: string } }>("/users/me/avatar", formData);
+  return data.data;
 }
 
 export type GetUsersResponse = {
