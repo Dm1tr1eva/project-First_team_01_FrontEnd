@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store/authStore";
 import { updateUser, updateAvatar } from "@/lib/api/clientApi";
@@ -62,10 +63,15 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
-    }
+    if (!file) return;
+
+    setAvatarFile(file);
+
+    // data: URL, не blob: — next/image рендерить data: напряму без оптимізатора,
+    // той самий патерн, що й ArticleImagePicker.tsx (FE-48)
+    const reader = new FileReader();
+    reader.onloadend = () => setAvatarPreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -120,7 +126,13 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
           {avatarPreview ? (
             <label className={css.filledAvatarWrapper} title="Change photo">
               <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
-              <img src={avatarPreview} alt="Avatar" className={css.avatarImg} />
+              <Image
+                src={avatarPreview}
+                alt="Avatar"
+                width={160}
+                height={160}
+                className={css.avatarImg}
+              />
               <div className={css.editOverlay}>
                 <PencilIcon />
               </div>
