@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import Image from "next/image";
+import Image from "next/image"; 
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store/authStore";
-import { updateUser, updateAvatar } from "@/lib/api/clientApi";
+import { updateUser, updateAvatar, deleteAvatar } from "@/lib/api/clientApi";
 import { CameraIcon, PencilIcon, CloseIcon } from "./Icons";
 import css from "./UserModal.module.css";
 
@@ -29,6 +29,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     if (user && isOpen) {
       setName(user.name || "");
       setAvatarPreview(user.avatarUrl || "");
+      setAvatarFile(null); 
       setErrorName("");
     }
   }, [user, isOpen]);
@@ -47,7 +48,6 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     if (e.target === e.currentTarget) onClose();
   };
 
-  // Жива валідація імені при вводі
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setName(value);
@@ -63,15 +63,41 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      setAvatarFile(file);
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-    setAvatarFile(file);
+  const handleRemovePhoto = async () => {
+    try {
+      setIsLoading(true);
 
-    // data: URL, не blob: — next/image рендерить data: напряму без оптимізатора,
-    // той самий патерн, що й ArticleImagePicker.tsx (FE-48)
-    const reader = new FileReader();
-    reader.onloadend = () => setAvatarPreview(reader.result as string);
-    reader.readAsDataURL(file);
+      if (avatarFile) {
+        setAvatarFile(null);
+        setAvatarPreview(user?.avatarUrl || "");
+        return; 
+      }
+
+      if (user?.avatarUrl && avatarPreview === user.avatarUrl) {
+        await deleteAvatar();
+        if (setUser && user) {
+          setUser({ ...user, avatarUrl: "" });
+        }
+        setAvatarPreview("");
+      }
+
+      router.refresh();
+    } catch (err: any) {
+      setErrorName("Error deleting photo");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -126,12 +152,12 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
           {avatarPreview ? (
             <label className={css.filledAvatarWrapper} title="Change photo">
               <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
-              <Image
-                src={avatarPreview}
-                alt="Avatar"
-                width={160}
-                height={160}
-                className={css.avatarImg}
+              <Image 
+                src={avatarPreview} 
+                alt="Avatar" 
+                width={120} 
+                height={120} 
+                className={css.avatarImg} 
               />
               <div className={css.editOverlay}>
                 <PencilIcon />
@@ -142,6 +168,17 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
               <input type="file" accept="image/*" onChange={handleFileChange} className={css.fileInput} />
               <CameraIcon />
             </label>
+          )}
+
+          {avatarPreview && (
+            <button
+              type="button"
+              className={css.deletePhotoButton}
+              onClick={handleRemovePhoto}
+              disabled={isLoading}
+            >
+              Remove photo
+            </button>
           )}
 
           <div className={css.inputWrapper}>
