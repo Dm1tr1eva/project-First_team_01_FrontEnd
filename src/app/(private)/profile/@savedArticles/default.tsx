@@ -27,10 +27,9 @@ function getErrorMessage(error: unknown, fallback: string): string {
 export default function SavedArticlesTab() {
   const currentUserId = useCurrentUserId();
 
-  const [visibleCount, setVisibleCount] = useState(ARTICLES_PER_PAGE);
+  const [page, setPage] = useState(1);
   const [removedArticleIds, setRemovedArticleIds] = useState<Set<string>>(new Set());
-  const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
-  const firstNewArticleRef = useRef<HTMLLIElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const { data, error, isError, isPending } = useQuery({
     queryKey: savedArticlesQueryKey(currentUserId),
@@ -42,31 +41,26 @@ export default function SavedArticlesTab() {
     () => (data?.articles ?? []).filter((article) => !removedArticleIds.has(article._id)),
     [data?.articles, removedArticleIds],
   );
-  const articles = useMemo(() => allArticles.slice(0, visibleCount), [allArticles, visibleCount]);
-  const hasMore = visibleCount < allArticles.length;
+  const totalPages = Math.max(1, Math.ceil(allArticles.length / ARTICLES_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const articles = useMemo(
+    () =>
+      allArticles.slice((currentPage - 1) * ARTICLES_PER_PAGE, currentPage * ARTICLES_PER_PAGE),
+    [allArticles, currentPage],
+  );
 
-  useEffect(() => {
-    if (!scrollTargetId || !firstNewArticleRef.current) {
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage === currentPage) {
       return;
     }
+
+    setPage(nextPage);
+
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    firstNewArticleRef.current.scrollIntoView({
+    sectionRef.current?.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
-    setScrollTargetId(null);
-  }, [scrollTargetId]);
-
-  const handleLoadMore = () => {
-    const previousCount = articles.length;
-    const nextCount = Math.min(visibleCount + ARTICLES_PER_PAGE, allArticles.length);
-    const firstNewArticle = allArticles[previousCount];
-
-    setVisibleCount(nextCount);
-
-    if (firstNewArticle) {
-      setScrollTargetId(firstNewArticle._id);
-    }
   };
 
   const handleGuestSaveAttempt = () => {
@@ -116,18 +110,16 @@ export default function SavedArticlesTab() {
   }
 
   return (
-    <div className={css.section}>
+    <div className={css.section} ref={sectionRef}>
       <ArticlesList
         articles={articles}
         authorNames={data?.authorNames ?? {}}
         savedArticleIds={allArticles.map((article) => article._id)}
         onGuestClick={handleGuestSaveAttempt}
         onSavedArticlesChange={handleSavedArticlesChange}
-        scrollTargetId={scrollTargetId}
-        scrollTargetRef={firstNewArticleRef}
       />
 
-      <Pagination hasMore={hasMore} isLoading={false} onLoadMore={handleLoadMore} />
+      <Pagination pageCount={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
     </div>
   );
 }
