@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className={css.footer}>
       <div className={`container ${css.wrap}`}>
-        <Link href="/" className={css.headerLink} aria-label="Home">
+        <Link title="Home page" href="/" className={css.footerLink} aria-label="Home">
           <svg className={css.logoIcon}>
             <use href="/sprite.svg#iconlogo" />
           </svg>
@@ -23,14 +23,19 @@ export default function Footer() {
 
         <ul className={css.navigation}>
           <li className={css.navigationItem}>
-            <Link href="/articles" className={getLinkClass("/articles")}>
+            <Link title="Articles page" href="/articles" className={getLinkClass("/articles")}>
               Articles
             </Link>
           </li>
           {isAuthenticated ? (
             <>
               <li className={css.navigationItemDesc}>
-                <Link href="/profile" prefetch={false} className={getLinkClass("/profile")}>
+                <Link
+                  title="My Profile page"
+                  href="/profile"
+                  prefetch={false}
+                  className={getLinkClass("/profile")}
+                >
                   Account
                 </Link>
               </li>

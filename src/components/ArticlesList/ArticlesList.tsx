@@ -1,4 +1,4 @@
-import type { Ref } from "react";
+import type { ReactNode, Ref } from "react";
 import ArticlesItem from "@/components/ArticlesItem/ArticlesItem";
 import type { Article } from "@/types/article";
 import css from "./ArticlesList.module.css";
@@ -11,6 +11,7 @@ interface ArticlesListProps {
   onSavedArticlesChange: (savedArticleIds: string[]) => void;
   scrollTargetId: string | null;
   scrollTargetRef: Ref<HTMLLIElement>;
+  renderAction?: (article: Article) => ReactNode;
 }
 
 export default function ArticlesList({
@@ -21,6 +22,7 @@ export default function ArticlesList({
   onSavedArticlesChange,
   scrollTargetId,
   scrollTargetRef,
+  renderAction,
 }: ArticlesListProps) {
   if (articles.length === 0) {
     return <p className={css.empty}>No articles found.</p>;
@@ -50,6 +52,7 @@ export default function ArticlesList({
               isSaved={savedArticleIds.includes(article._id)}
               onGuestClick={onGuestClick}
               onSavedArticlesChange={onSavedArticlesChange}
+              action={renderAction?.(article)}
             />
           </li>
         );

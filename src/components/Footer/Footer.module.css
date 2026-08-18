@@ -13,17 +13,30 @@
   align-items: center;
 }
 
+.footerLink {
+  text-decoration: none;
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #649179;
+}
+
+.footerLink:hover {
+  color: #374f42;
+}
+
 .logoIcon {
   width: 165px;
   height: 46px;
   display: block;
   flex-shrink: 0;
 }
+
 .copyright {
   font-family: "Manrope", sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #070721;
+  color: black;
 }
 .navigationLink {
   position: relative;

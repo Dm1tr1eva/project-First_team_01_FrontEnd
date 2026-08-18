@@ -1,10 +1,12 @@
 "use client";
 
 import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import type { ComponentType } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ArticleFilter, { type ArticlesFilterValue } from "@/components/ArticleFilter/ArticleFilter";
 import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
+import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import Pagination from "@/components/Pagination/Pagination";
 import SectionTitle from "@/components/SectionTitle/SectionTitle";
 import {
@@ -28,6 +30,12 @@ type SavedArticleIdsOverride = {
   userId: string;
   articleIds: string[];
 };
+
+type ModalErrorSaveIntegrationProps = {
+  onClose: () => void;
+};
+
+const IntegratedModalErrorSave = ModalErrorSave as ComponentType<ModalErrorSaveIntegrationProps>;
 
 function getUniqueArticles(pages: ArticlesPageResponse[]): Article[] {
   const articlesById = new Map<string, Article>();
@@ -82,6 +90,7 @@ export default function ArticlesPage() {
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
   const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
+  const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const firstNewArticleRef = useRef<HTMLLIElement>(null);
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -120,6 +129,7 @@ export default function ArticlesPage() {
     [data?.pages],
   );
   const totalArticles = data?.pages[0]?.totalItems ?? 0;
+  const isArticlesCountLoading = isPending || isPlaceholderData;
   const savedArticleIds = useMemo(() => {
     if (!userId) {
       return [];
@@ -175,7 +185,7 @@ export default function ArticlesPage() {
     }
   };
 
-  const handleGuestSaveAttempt = () => undefined;
+  const handleGuestSaveAttempt = () => setIsErrorSaveOpen(true);
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
     if (userId) {
@@ -198,7 +208,9 @@ export default function ArticlesPage() {
         </SectionTitle>
 
         <div className={css.toolbar}>
-          <p className={css.count}>{totalArticles} articles</p>
+          <p className={css.count} aria-live="polite">
+            {isArticlesCountLoading ? null : `${totalArticles} articles`}
+          </p>
 
           <ArticleFilter
             value={filter}
@@ -257,6 +269,8 @@ export default function ArticlesPage() {
           </span>
         )}
       </section>
+
+      {isErrorSaveOpen && <IntegratedModalErrorSave onClose={() => setIsErrorSaveOpen(false)} />}
     </div>
   );
 }

@@ -1,7 +1,12 @@
 import api from "./browserApi";
-
 import type { User, AuthUser, GetMeResponse, GetUsers } from "@/types/user";
-import type { Article, ArticlesListResponse, Category } from "@/types/article";
+import type {
+  Article,
+  ArticlesListResponse,
+  Category,
+  CreateArticleRequest,
+  UpdateArticleRequest,
+} from "@/types/article";
 import axios from "axios";
 
 // --- auth ---
@@ -37,14 +42,40 @@ export async function getUserInfo(id: string): Promise<User> {
 }
 
 export async function updateUser(payload: { name?: string }): Promise<AuthUser> {
-  const { data } = await api.patch<AuthUser>("/users/me", payload);
-  return data;
+  const { data } = await api.patch<{ data: AuthUser }>("/users/me", payload);
+  return data.data;
 }
 
 export async function updateAvatar(file: File): Promise<{ avatarUrl: string }> {
   const formData = new FormData();
   formData.append("avatar", file);
-  const { data } = await api.patch<{ avatarUrl: string }>("/users/me/avatar", formData);
+
+  const { data } = await api.patch<{ data: { avatarUrl: string } }>("/users/me/avatar", formData);
+  return data.data;
+}
+
+export async function deleteAvatar(): Promise<{ avatarUrl: string }> {
+  const { data } = await api.delete<{ data: { avatarUrl: string } }>("/users/me/avatar");
+  return data.data;
+}
+
+export type GetUsersResponse = {
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  users: User[];
+};
+
+export async function getUsers(
+  params: {
+    page?: number;
+    perPage?: number;
+    sortBy?: "name" | "articlesAmount" | "createdAt" | "rating";
+    order?: "asc" | "desc";
+  } = {},
+): Promise<GetUsersResponse> {
+  const { data } = await api.get<GetUsersResponse>("/users", { params });
   return data;
 }
 
@@ -115,18 +146,9 @@ export async function getArticleById(id: string): Promise<Article> {
   return data.article;
 }
 
-export type CreateArticleRequest = {
-  title: string;
-  desc: string;
-  article: string;
-  category?: Category;
-  img: File;
-};
-
 export async function createArticle(payload: CreateArticleRequest): Promise<Article> {
   const formData = new FormData();
   formData.append("title", payload.title);
-  formData.append("desc", payload.desc);
   formData.append("article", payload.article);
   if (payload.category) formData.append("category", payload.category);
   formData.append("img", payload.img);
@@ -134,8 +156,6 @@ export async function createArticle(payload: CreateArticleRequest): Promise<Arti
   const { data } = await api.post<{ data: Article }>("/articles", formData);
   return data.data;
 }
-
-export type UpdateArticleRequest = Partial<Omit<CreateArticleRequest, "img">> & { img?: File };
 
 export async function updateArticle(id: string, payload: UpdateArticleRequest): Promise<Article> {
   const formData = new FormData();
@@ -170,7 +190,15 @@ export const checkSession = async (): Promise<boolean> => {
     const { data } = await api.get("/auth/session");
 
     return data.success === true;
-  } catch {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      try {
+        await api.post("/auth/logout");
+      } catch {
+        // ничего
+      }
+    }
+
     return false;
   }
 };
