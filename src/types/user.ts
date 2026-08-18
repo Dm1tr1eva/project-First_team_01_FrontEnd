@@ -13,3 +13,10 @@ export type AuthUser = {
   email: string;
   avatarUrl: string | null;
 };
+
+export type GetMeResponse = {
+  success: boolean;
+  data: {
+    user: AuthUser;
+  };
+};

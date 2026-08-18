@@ -85,6 +85,8 @@
   height: 38px;
   background-color: #649179;
   margin-bottom: 20px;
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
 .button:hover {

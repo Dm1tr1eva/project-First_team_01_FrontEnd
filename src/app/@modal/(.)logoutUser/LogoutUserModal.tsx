@@ -13,14 +13,9 @@ export default function LogoutUserModalClient() {
 
   const handleLogoutUser = async () => {
     try {
-      // 1. Удаляем сессию на backend
       await logout();
-
-      // 2. Сразу меняем состояние клиента
       clearIsAuthenticated();
-
-      // 3. Полный переход — гарантированно сбрасывает parallel route/modal
-      window.location.href = "/login";
+      window.location.href = "/";
     } catch (error) {
       console.error("Logout error:", error);
     }

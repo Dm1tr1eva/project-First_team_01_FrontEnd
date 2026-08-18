@@ -39,6 +39,11 @@
   border-color: #649179;
 }
 
+.button[data-variant="wide"][data-saved="true"] {
+  background-color: #374f42;
+  border-color: #374f42;
+}
+
 .button[data-variant="icon"][data-saved="true"] {
   color: #f7fffb;
   background-color: #649179;
