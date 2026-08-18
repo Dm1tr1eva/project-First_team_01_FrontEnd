@@ -15,17 +15,13 @@ export default function AuthorsItem({ author }: AuthorUserProps) {
   return (
     <li className={css.item}>
       <Link href={`/authors/${author._id}`} className={css.link}>
-        {avatarUrl ? (
-          <Image
-            src={avatarUrl}
-            alt={author.name}
-            width={262}
-            height={262}
-            className={css.avatar}
-          />
-        ) : (
-          <div className={css.avatarPlaceholder}>{author.name.charAt(0).toUpperCase()}</div>
-        )}
+        <Image
+          src={avatarUrl || "/default-avatar.png"}
+          alt={author.name}
+          width={262}
+          height={262}
+          className={css.avatar}
+        />
 
         <p className={css.name}>{firstName}</p>
       </Link>
