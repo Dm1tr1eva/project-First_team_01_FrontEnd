@@ -1,3 +1,9 @@
+import AuthorsList from "@/components/AuthorsList/AuthorsList";
+import css from "./page.module.css";
 export default function AuthorsPage() {
-  return <div>AuthorsPage</div>;
+  return (
+    <main>
+      <AuthorsList />
+    </main>
+  );
 }

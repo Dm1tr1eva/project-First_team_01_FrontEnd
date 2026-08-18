@@ -1,14 +1,16 @@
 import { getSavedArticles, getUserInfo } from "@/lib/api/clientApi";
 import type { Article } from "@/types/article";
 
+export type SavedArticlesWithAuthors = {
+  articles: Article[];
+  authorNames: Record<string, string>;
+};
+
 export function savedArticlesQueryKey(currentUserId: string | undefined) {
   return ["saved-articles-full", currentUserId] as const;
 }
 
-export async function fetchSavedArticlesWithAuthors(): Promise<{
-  articles: Article[];
-  authorNames: Record<string, string>;
-}> {
+export async function fetchSavedArticlesWithAuthors(): Promise<SavedArticlesWithAuthors> {
   const articles = await getSavedArticles();
 
   const embeddedAuthorEntries = articles.flatMap((article) =>

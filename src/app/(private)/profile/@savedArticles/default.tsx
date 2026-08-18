@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,11 @@ import ArticlesList from "@/components/ArticlesList/ArticlesList";
 import Loader from "@/components/Loader/Loader";
 import Pagination from "@/components/Pagination/Pagination";
 import { useCurrentUserId } from "../useCurrentUserId";
-import { fetchSavedArticlesWithAuthors, savedArticlesQueryKey } from "../savedArticlesQuery";
+import {
+  fetchSavedArticlesWithAuthors,
+  savedArticlesQueryKey,
+  type SavedArticlesWithAuthors,
+} from "../savedArticlesQuery";
 import css from "./default.module.css";
 
 const ARTICLES_PER_PAGE = 12;
@@ -26,21 +30,19 @@ function getErrorMessage(error: unknown, fallback: string): string {
 
 export default function SavedArticlesTab() {
   const currentUserId = useCurrentUserId();
+  const queryClient = useQueryClient();
+  const queryKey = savedArticlesQueryKey(currentUserId);
 
   const [page, setPage] = useState(1);
-  const [removedArticleIds, setRemovedArticleIds] = useState<Set<string>>(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const { data, error, isError, isPending } = useQuery({
-    queryKey: savedArticlesQueryKey(currentUserId),
+    queryKey,
     queryFn: fetchSavedArticlesWithAuthors,
     enabled: Boolean(currentUserId),
   });
 
-  const allArticles = useMemo(
-    () => (data?.articles ?? []).filter((article) => !removedArticleIds.has(article._id)),
-    [data?.articles, removedArticleIds],
-  );
+  const allArticles = useMemo(() => data?.articles ?? [], [data?.articles]);
   const totalPages = Math.max(1, Math.ceil(allArticles.length / ARTICLES_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const articles = useMemo(
@@ -69,15 +71,12 @@ export default function SavedArticlesTab() {
 
   const handleSavedArticlesChange = (articleIds: string[]) => {
     const stillSavedIds = new Set(articleIds);
-    setRemovedArticleIds((previous) => {
-      const next = new Set(previous);
-      allArticles.forEach((article) => {
-        if (!stillSavedIds.has(article._id)) {
-          next.add(article._id);
-        }
-      });
-      return next;
-    });
+
+    queryClient.setQueryData<SavedArticlesWithAuthors>(queryKey, (previous) =>
+      previous
+        ? { ...previous, articles: previous.articles.filter((a) => stillSavedIds.has(a._id)) }
+        : previous,
+    );
   };
 
   useEffect(() => {
