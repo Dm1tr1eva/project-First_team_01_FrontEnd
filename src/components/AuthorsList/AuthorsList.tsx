@@ -1,44 +1,65 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import AuthorsItem from "@/components/AuthorsItem/AuthorsItem";
 import Loader from "@/components/Loader/Loader";
+import Pagination from "@/components/Pagination/Pagination";
 import { getUsers } from "@/lib/api/clientApi";
-import type { User } from "@/types/user";
 import css from "./AuthorsList.module.css";
 
 const USERS_PER_PAGE = 20;
 
 export default function AuthorsList() {
   const [page, setPage] = useState(1);
-  const [authors, setAuthors] = useState<User[]>([]);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const pendingScrollPageRef = useRef<number | null>(null);
 
-  const { data, error, isError, isPending, isFetching, refetch } = useQuery({
+  const { data, error, isError, isFetching, isPending } = useQuery({
     queryKey: ["users", page],
     queryFn: () => getUsers({ page, perPage: USERS_PER_PAGE }),
   });
 
+  const authors = data?.users ?? [];
+  const totalPages = data?.totalPages ?? 0;
+
+  // Scroll only once the requested page's data has actually landed (not while
+  // `isFetching`), otherwise scrollIntoView targets a scroll height computed
+  // from the still-old (usually longer) list and can undershoot after the
+  // shorter page renders in.
   useEffect(() => {
-    if (!data) {
+    if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== page) {
       return;
     }
 
-    setAuthors((prevAuthors) => {
-      if (page === 1) {
-        return data.users;
-      }
+    if (isFetching) {
+      return;
+    }
 
-      return [...prevAuthors, ...data.users];
+    pendingScrollPageRef.current = null;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sectionRef.current?.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
     });
-  }, [data, page]);
+  }, [page, isFetching]);
 
-  if (isPending && page === 1) {
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage === page) {
+      return;
+    }
+
+    pendingScrollPageRef.current = nextPage;
+    setPage(nextPage);
+  };
+
+  if (isPending) {
     return <Loader />;
   }
 
-  if (isError && page === 1) {
+  if (isError) {
     return <p>{error instanceof Error ? error.message : "Failed to load authors."}</p>;
   }
 
@@ -46,21 +67,8 @@ export default function AuthorsList() {
     return <p>No authors found.</p>;
   }
 
-  const hasMore = data ? page < data.totalPages : false;
-  // На відміну від сторінки 1: тут дані попередніх сторінок уже показані,
-  // просто підвантаження чергової впало (data для цього page — undefined,
-  // тож hasMore теж стає false, і кнопка Load More мовчки зникає без жодного
-  // повідомлення чому)
-  const isLoadMoreError = isError && page > 1;
-
-  const handleLoadMore = () => {
-    if (!isFetching && hasMore) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-
   return (
-    <div className={`container ${css.content}`}>
+    <div ref={sectionRef} className={`container ${css.content}`} aria-busy={isFetching}>
       <h2 className={css.title}>Authors</h2>
 
       <ul className={css.list}>
@@ -69,27 +77,7 @@ export default function AuthorsList() {
         ))}
       </ul>
 
-      {hasMore && (
-        <button
-          type="button"
-          onClick={handleLoadMore}
-          className={css.load_button}
-          disabled={isFetching}
-        >
-          {isFetching ? "Loading..." : "Load More"}
-        </button>
-      )}
-
-      {isLoadMoreError && (
-        <div className={css.loadMoreError}>
-          <p role="alert">
-            {error instanceof Error ? error.message : "Failed to load more authors."}
-          </p>
-          <button type="button" onClick={() => refetch()} className={css.load_button}>
-            Try again
-          </button>
-        </div>
-      )}
+      <Pagination pageCount={totalPages} currentPage={page} onPageChange={handlePageChange} />
     </div>
   );
 }

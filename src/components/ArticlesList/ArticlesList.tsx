@@ -9,8 +9,8 @@ interface ArticlesListProps {
   savedArticleIds: string[];
   onGuestClick: () => void;
   onSavedArticlesChange: (savedArticleIds: string[]) => void;
-  scrollTargetId: string | null;
-  scrollTargetRef: Ref<HTMLLIElement>;
+  scrollTargetId?: string | null;
+  scrollTargetRef?: Ref<HTMLLIElement>;
   renderAction?: (article: Article) => ReactNode;
 }
 
@@ -20,7 +20,7 @@ export default function ArticlesList({
   savedArticleIds,
   onGuestClick,
   onSavedArticlesChange,
-  scrollTargetId,
+  scrollTargetId = null,
   scrollTargetRef,
   renderAction,
 }: ArticlesListProps) {

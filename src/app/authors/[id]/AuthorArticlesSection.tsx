@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -11,7 +11,6 @@ import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
 import { useCurrentUserId } from "@/hooks/useCurrentUser";
-import type { Article } from "@/types/article";
 import css from "./AuthorArticlesSection.module.css";
 
 type AuthorArticlesSectionProps = {
@@ -33,24 +32,16 @@ function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-function getUniqueArticles(pages: { articles: Article[] }[]): Article[] {
-  const articlesById = new Map<string, Article>();
-  pages.forEach((page) => {
-    page.articles.forEach((article) => articlesById.set(article._id, article));
-  });
-  return [...articlesById.values()];
-}
-
-
 export default function AuthorArticlesSection({
   authorId,
   authorName,
 }: AuthorArticlesSectionProps) {
+  const [page, setPage] = useState(1);
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
-  const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
   const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
-  const firstNewArticleRef = useRef<HTMLLIElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const pendingScrollPageRef = useRef<number | null>(null);
 
   const currentUserId = useCurrentUserId();
 
@@ -60,16 +51,13 @@ export default function AuthorArticlesSection({
     enabled: Boolean(currentUserId),
   });
 
-  const { data, error, fetchNextPage, hasNextPage, isError, isFetchingNextPage, isPending } =
-    useInfiniteQuery({
-      queryKey: ["authorArticles", authorId],
-      queryFn: ({ pageParam }) =>
-        getUserArticles(authorId, { page: pageParam, perPage: ARTICLES_PER_PAGE }),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-    });
+  const { data, error, isError, isFetching, isPending } = useQuery({
+    queryKey: ["authorArticles", authorId, page],
+    queryFn: () => getUserArticles(authorId, { page, perPage: ARTICLES_PER_PAGE }),
+  });
 
-  const articles = useMemo(() => getUniqueArticles(data?.pages ?? []), [data?.pages]);
+  const articles = data?.articles ?? [];
+  const totalPages = data?.totalPages ?? 0;
   const authorNames = useMemo(() => ({ [authorId]: authorName }), [authorId, authorName]);
 
   const savedArticleIds = useMemo(() => {
@@ -84,34 +72,35 @@ export default function AuthorArticlesSection({
     return savedArticles?.map((article) => article._id) ?? [];
   }, [currentUserId, savedArticleIdsOverride, savedArticles]);
 
+  // Scroll only once the requested page's data has actually landed (not while
+  // `isFetching`), otherwise scrollIntoView targets a scroll height computed
+  // from the still-old (usually longer) list and can undershoot after the
+  // shorter page renders in.
   useEffect(() => {
-    if (!scrollTargetId || !firstNewArticleRef.current) {
+    if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== page) {
       return;
     }
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isFetching) {
+      return;
+    }
 
-    firstNewArticleRef.current.scrollIntoView({
+    pendingScrollPageRef.current = null;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sectionRef.current?.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
-    setScrollTargetId(null);
-  }, [scrollTargetId]);
+  }, [page, isFetching]);
 
-  const handleLoadMore = async () => {
-    const previousArticleIds = new Set(articles.map((article) => article._id));
-    const result = await fetchNextPage();
-
-    if (result.isError) {
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage === page) {
       return;
     }
 
-    const updatedArticles = getUniqueArticles(result.data?.pages ?? []);
-    const firstNewArticle = updatedArticles.find((article) => !previousArticleIds.has(article._id));
-
-    if (firstNewArticle) {
-      setScrollTargetId(firstNewArticle._id);
-    }
+    pendingScrollPageRef.current = nextPage;
+    setPage(nextPage);
   };
 
   const handleGuestSaveAttempt = () => setIsErrorSaveOpen(true);
@@ -146,22 +135,16 @@ export default function AuthorArticlesSection({
   }
 
   return (
-    <div className={css.section}>
+    <div className={css.section} ref={sectionRef} aria-busy={isFetching}>
       <ArticlesList
         articles={articles}
         authorNames={authorNames}
         savedArticleIds={savedArticleIds}
         onGuestClick={handleGuestSaveAttempt}
         onSavedArticlesChange={handleSavedArticlesChange}
-        scrollTargetId={scrollTargetId}
-        scrollTargetRef={firstNewArticleRef}
       />
 
-      <Pagination
-        hasMore={Boolean(hasNextPage)}
-        isLoading={isFetchingNextPage}
-        onLoadMore={handleLoadMore}
-      />
+      <Pagination pageCount={totalPages} currentPage={page} onPageChange={handlePageChange} />
 
       {isErrorSaveOpen && <ModalErrorSave onClose={() => setIsErrorSaveOpen(false)} />}
     </div>
