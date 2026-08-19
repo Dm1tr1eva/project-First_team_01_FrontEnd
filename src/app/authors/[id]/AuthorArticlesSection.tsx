@@ -41,6 +41,7 @@ export default function AuthorArticlesSection({
     useState<SavedArticleIdsOverride | null>(null);
   const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const pendingScrollPageRef = useRef<number | null>(null);
 
   const currentUserId = useCurrentUserId();
 
@@ -70,8 +71,6 @@ export default function AuthorArticlesSection({
 
     return savedArticles?.map((article) => article._id) ?? [];
   }, [currentUserId, savedArticleIdsOverride, savedArticles]);
-
-  const pendingScrollPageRef = useRef<number | null>(null);
 
   // Scroll only once the requested page's data has actually landed (not while
   // `isFetching`), otherwise scrollIntoView targets a scroll height computed

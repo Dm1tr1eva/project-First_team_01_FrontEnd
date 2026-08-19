@@ -82,6 +82,7 @@ export default function ArticlesPage() {
     useState<SavedArticleIdsOverride | null>(null);
   const [isErrorSaveOpen, setIsErrorSaveOpen] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const pendingScrollPageRef = useRef<number | null>(null);
   const userId = useAuthStore((state) => state.user?.id);
 
   const { data: savedArticles } = useQuery({
@@ -112,8 +113,6 @@ export default function ArticlesPage() {
 
     return savedArticles?.map((article) => article._id) ?? [];
   }, [savedArticleIdsOverride, savedArticles, userId]);
-
-  const pendingScrollPageRef = useRef<number | null>(null);
 
   // Scroll only once the requested page's data has actually landed (not while
   // `isFetching`), otherwise scrollIntoView targets a scroll height computed

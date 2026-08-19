@@ -35,6 +35,7 @@ export default function SavedArticlesTab() {
 
   const [page, setPage] = useState(1);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const pendingScrollPageRef = useRef<number | null>(null);
 
   const { data, error, isError, isPending } = useQuery({
     queryKey,
@@ -50,8 +51,6 @@ export default function SavedArticlesTab() {
       allArticles.slice((currentPage - 1) * ARTICLES_PER_PAGE, currentPage * ARTICLES_PER_PAGE),
     [allArticles, currentPage],
   );
-
-  const pendingScrollPageRef = useRef<number | null>(null);
 
   // Scroll only after React has re-rendered with the new (usually shorter)
   // slice, otherwise scrollIntoView targets a scroll height computed from the

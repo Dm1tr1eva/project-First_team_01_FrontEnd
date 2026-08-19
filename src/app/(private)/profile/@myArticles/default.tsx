@@ -40,6 +40,7 @@ export default function MyArticlesTab() {
   const [savedArticleIdsOverride, setSavedArticleIdsOverride] =
     useState<SavedArticleIdsOverride | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const pendingScrollPageRef = useRef<number | null>(null);
 
   const { data: savedArticles } = useQuery({
     queryKey: ["saved-articles", currentUserId],
@@ -69,8 +70,6 @@ export default function MyArticlesTab() {
     }
     return savedArticles?.map((article) => article._id) ?? [];
   }, [currentUserId, savedArticleIdsOverride, savedArticles]);
-
-  const pendingScrollPageRef = useRef<number | null>(null);
 
   // Scroll only once the requested page's data has actually landed (not while
   // `isFetching`), otherwise scrollIntoView targets a scroll height computed
