@@ -71,18 +71,37 @@ export default function AuthorArticlesSection({
     return savedArticles?.map((article) => article._id) ?? [];
   }, [currentUserId, savedArticleIdsOverride, savedArticles]);
 
-  const handlePageChange = (nextPage: number) => {
-    if (nextPage === page) {
+  const pendingScrollPageRef = useRef<number | null>(null);
+
+  // Scroll only once the requested page's data has actually landed (not while
+  // `isFetching`), otherwise scrollIntoView targets a scroll height computed
+  // from the still-old (usually longer) list and can undershoot after the
+  // shorter page renders in.
+  useEffect(() => {
+    if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== page) {
       return;
     }
 
-    setPage(nextPage);
+    if (isFetching) {
+      return;
+    }
+
+    pendingScrollPageRef.current = null;
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     sectionRef.current?.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
+  }, [page, isFetching]);
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage === page) {
+      return;
+    }
+
+    pendingScrollPageRef.current = nextPage;
+    setPage(nextPage);
   };
 
   const handleGuestSaveAttempt = () => setIsErrorSaveOpen(true);

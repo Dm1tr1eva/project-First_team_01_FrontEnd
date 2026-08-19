@@ -2,7 +2,7 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import type { ComponentType } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ArticleFilter, { type ArticlesFilterValue } from "@/components/ArticleFilter/ArticleFilter";
 import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
@@ -113,13 +113,29 @@ export default function ArticlesPage() {
     return savedArticles?.map((article) => article._id) ?? [];
   }, [savedArticleIdsOverride, savedArticles, userId]);
 
-  const scrollToSection = () => {
+  const pendingScrollPageRef = useRef<number | null>(null);
+
+  // Scroll only once the requested page's data has actually landed (not while
+  // `isFetching`), otherwise scrollIntoView targets a scroll height computed
+  // from the still-old (usually longer) list and can undershoot after the
+  // shorter page renders in.
+  useEffect(() => {
+    if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== page) {
+      return;
+    }
+
+    if (isFetching) {
+      return;
+    }
+
+    pendingScrollPageRef.current = null;
+
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     sectionRef.current?.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
-  };
+  }, [page, isFetching]);
 
   const handleFilterChange = (nextFilter: ArticlesFilterValue) => {
     if (nextFilter === filter) {
@@ -135,8 +151,8 @@ export default function ArticlesPage() {
       return;
     }
 
+    pendingScrollPageRef.current = nextPage;
     setPage(nextPage);
-    scrollToSection();
   };
 
   const handleGuestSaveAttempt = () => setIsErrorSaveOpen(true);

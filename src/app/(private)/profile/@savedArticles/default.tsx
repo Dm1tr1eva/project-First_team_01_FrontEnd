@@ -51,18 +51,32 @@ export default function SavedArticlesTab() {
     [allArticles, currentPage],
   );
 
-  const handlePageChange = (nextPage: number) => {
-    if (nextPage === currentPage) {
+  const pendingScrollPageRef = useRef<number | null>(null);
+
+  // Scroll only after React has re-rendered with the new (usually shorter)
+  // slice, otherwise scrollIntoView targets a scroll height computed from the
+  // still-old list and can undershoot once the shorter page renders in.
+  useEffect(() => {
+    if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== currentPage) {
       return;
     }
 
-    setPage(nextPage);
+    pendingScrollPageRef.current = null;
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     sectionRef.current?.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
+  }, [currentPage]);
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage === currentPage) {
+      return;
+    }
+
+    pendingScrollPageRef.current = nextPage;
+    setPage(nextPage);
   };
 
   const handleGuestSaveAttempt = () => {
