@@ -15,7 +15,7 @@ export default function AuthorsList() {
   const [page, setPage] = useState(1);
   const [authors, setAuthors] = useState<User[]>([]);
 
-  const { data, error, isError, isPending, isFetching } = useQuery({
+  const { data, error, isError, isPending, isFetching, refetch } = useQuery({
     queryKey: ["users", page],
     queryFn: () => getUsers({ page, perPage: USERS_PER_PAGE }),
   });
@@ -47,6 +47,11 @@ export default function AuthorsList() {
   }
 
   const hasMore = data ? page < data.totalPages : false;
+  // На відміну від сторінки 1: тут дані попередніх сторінок уже показані,
+  // просто підвантаження чергової впало (data для цього page — undefined,
+  // тож hasMore теж стає false, і кнопка Load More мовчки зникає без жодного
+  // повідомлення чому)
+  const isLoadMoreError = isError && page > 1;
 
   const handleLoadMore = () => {
     if (!isFetching && hasMore) {
@@ -73,6 +78,17 @@ export default function AuthorsList() {
         >
           {isFetching ? "Loading..." : "Load More"}
         </button>
+      )}
+
+      {isLoadMoreError && (
+        <div className={css.loadMoreError}>
+          <p role="alert">
+            {error instanceof Error ? error.message : "Failed to load more authors."}
+          </p>
+          <button type="button" onClick={() => refetch()} className={css.load_button}>
+            Try again
+          </button>
+        </div>
       )}
     </div>
   );

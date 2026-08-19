@@ -27,6 +27,32 @@
   display: block;
 }
 
+.load_button:hover,
+.load_button:focus-visible {
+  background-color: var(--articles-accent-hover, #527c66);
+  border-color: var(--articles-accent-hover, #527c66);
+}
+
+.load_button:focus-visible {
+  outline: 2px solid rgb(100 145 121 / 25%);
+  outline-offset: 2px;
+}
+
+.loadMoreError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.loadMoreError p {
+  margin: 0;
+  color: var(--color-text, #070721);
+  font-size: 14px;
+}
+
 .content {
   padding-top: 48px;
   padding-bottom: 48px;
