@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import AddArticleForm from "@/components/AddArticleForm/AddArticleForm";
 import { getArticleById } from "@/lib/api/serverApi";
 import { getCurrentUserServer } from "@/app/(private)/profile/getCurrentUserServer";
@@ -9,6 +10,11 @@ type Props = {
   params: Promise<{
     id: string;
   }>;
+};
+
+export const metadata: Metadata = {
+  title: "Edit article — Harmoniq",
+  description: "Edit your article on Harmoniq.",
 };
 
 export default async function EditArticlePage({
