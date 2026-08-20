@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { addSavedArticle, removeSavedArticle } from "@/lib/api/clientApi";
@@ -38,11 +38,17 @@ export default function ButtonAddToBookmarks({
   onSavedArticlesChange,
 }: ButtonAddToBookmarksProps) {
   const user = useAuthStore((state) => state.user);
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: () => (isSaved ? removeSavedArticle(articleId) : addSavedArticle(articleId)),
     onSuccess: ({ savedArticles }) => {
       onSavedArticlesChange(savedArticles);
+      // Партіал-матч по префіксу зачіпає й ["saved-articles", userId] (5 місць,
+      // оновлюються напряму через onSavedArticlesChange вище), і
+      // ["saved-articles", userId, "full"] (лічильник у профілі, savedArticlesQuery.ts) —
+      // без цього другий ніколи не дізнається про зміну, зроблену тут
+      queryClient.invalidateQueries({ queryKey: ["saved-articles"] });
     },
     onError: (error) => {
       const message = isAxiosError<ApiErrorResponse>(error)
