@@ -25,7 +25,15 @@ const AuthProvider = ({ children, hasSessionHint }: Props) => {
   const [isPending, setIsPending] = useState(hasSessionHint);
 
   useEffect(() => {
-    if (!hasSessionHint) {
+    // Сервер не бачив жодної сесійної cookie, але localStorage з попереднього
+    // візиту досі каже "авторизований" (наприклад, куки стерли в налаштуваннях
+    // браузера, а не через кнопку Logout) — без цієї перевірки Header лишився б
+    // застряглим у хибному стані назавжди, бо ніщо більше не поставило б
+    // clearIsAuthenticated(). Гостю, у якого і cookie, і localStorage порожні,
+    // цей запит, як і раніше, не потрібен.
+    const mightBeAuthenticated = hasSessionHint || useAuthStore.getState().isAuthenticated;
+
+    if (!mightBeAuthenticated) {
       return;
     }
 
