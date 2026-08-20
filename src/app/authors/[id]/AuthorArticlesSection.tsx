@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 import { ARTICLES_PER_PAGE } from "./constants";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
+import Loader from "@/components/Loader/Loader";
 import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import Pagination from "@/components/Pagination/Pagination";
 import { getSavedArticles, getUserArticles } from "@/lib/api/clientApi";
@@ -120,9 +121,9 @@ export default function AuthorArticlesSection({
 
   if (isPending) {
     return (
-      <p className={css.message} role="status">
-        Loading articles...
-      </p>
+      <div className={css.loader} role="status" aria-label="Loading articles">
+        <Loader />
+      </div>
     );
   }
 

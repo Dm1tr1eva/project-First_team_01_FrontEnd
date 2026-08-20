@@ -14,3 +14,9 @@
 .error {
   color: var(--color-error);
 }
+
+.loader {
+  display: grid;
+  min-height: 492px;
+  place-items: center;
+}
