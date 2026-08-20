@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import AuthorsItem from "@/components/AuthorsItem/AuthorsItem";
 import Loader from "@/components/Loader/Loader";
@@ -19,6 +19,7 @@ export default function AuthorsList() {
   const { data, error, isError, isFetching, isPending } = useQuery({
     queryKey: ["users", page],
     queryFn: () => getUsers({ page, perPage: USERS_PER_PAGE }),
+    placeholderData: keepPreviousData,
   });
 
   const authors = data?.users ?? [];

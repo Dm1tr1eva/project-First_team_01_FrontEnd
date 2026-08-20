@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -52,6 +52,7 @@ export default function MyArticlesTab() {
     queryKey: ["myArticles", currentUserId, page],
     queryFn: () => getUserArticles(currentUserId as string, { page, perPage: ARTICLES_PER_PAGE }),
     enabled: Boolean(currentUserId),
+    placeholderData: keepPreviousData,
   });
 
   const articles = data?.articles ?? [];
