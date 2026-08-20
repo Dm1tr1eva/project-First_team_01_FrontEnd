@@ -4,6 +4,7 @@ import Link from "next/link";
 import css from "./Header.module.css";
 
 import { useAuthStore } from "../../lib/store/authStore";
+import { useAuthPending } from "../AuthProvider/AuthProvider";
 import { useRouter, usePathname } from "next/navigation";
 import HeaderUserBar from "./HeaderUserBar/HeaderUserBar";
 
@@ -20,6 +21,10 @@ export default function Header() {
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
+  // Поки триває первісна перевірка сесії — не показуємо ні гостьові, ні
+  // авторизовані кнопки, щоб не блимнути "Log in/Join now" залогіненому
+  // юзеру на новому пристрої (FE-53). Для справжніх гостей це false одразу.
+  const isCheckingAuth = useAuthPending();
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 1439) {
@@ -86,7 +91,7 @@ export default function Header() {
                   getLinkClass={getLinkClass}
                 />
 
-                {isAuthenticated ? (
+                {isCheckingAuth ? null : isAuthenticated ? (
                   <>
                     <li className={css.navigationItemDesc}>
                       <Link
@@ -171,7 +176,7 @@ export default function Header() {
               className="navigationItem"
               getLinkClass={getLinkClass}
             />
-            {isAuthenticated ? (
+            {isCheckingAuth ? null : isAuthenticated ? (
               <>
                 <li className={css.navigationItem}>
                   <Link

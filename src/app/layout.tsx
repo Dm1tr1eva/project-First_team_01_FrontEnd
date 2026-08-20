@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Manrope, Merienda } from "next/font/google";
+import { cookies } from "next/headers";
 import AuthProvider from "@/components/AuthProvider/AuthProvider";
 import Layout from "@/components/Layout/Layout";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
@@ -33,18 +34,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   modal,
 }: Readonly<{
   children: React.ReactNode;
   modal?: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  // Той самий сигнал, що вже рахує proxy.ts: чи є взагалі сенс питати бекенд
+  // про сесію. Порожній для справжнього гостя, без жодного мережевого запиту.
+  const hasSessionHint = Boolean(
+    cookieStore.get("accessToken")?.value ||
+      (cookieStore.get("refreshToken")?.value && cookieStore.get("sessionId")?.value),
+  );
+
   return (
     <html lang="en" className={`${manrope.variable} ${merienda.variable}`}>
       <body>
         <TanStackProvider>
-          <AuthProvider>
+          <AuthProvider hasSessionHint={hasSessionHint}>
             <Layout>
               {children} {modal}
             </Layout>

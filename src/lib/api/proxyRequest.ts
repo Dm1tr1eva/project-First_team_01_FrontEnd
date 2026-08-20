@@ -20,6 +20,12 @@ export async function proxyRequest(request: NextRequest, backendPath: string) {
       headers.set("Cookie", cookie);
     }
 
+    // Бекендний мінімальний CSRF-захист (BE-06) вимагає цей заголовок на
+    // мутуючих запитах. Браузер його на наш же proxy route не ставить, тож
+    // додаємо тут — цей fetch не браузерний cross-origin виклик, CORS
+    // preflight на нього не діє.
+    headers.set("X-Requested-With", "XMLHttpRequest");
+
     const outgoingRequest = new Request(targetUrl, {
       method: request.method,
       headers,
