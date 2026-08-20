@@ -185,14 +185,6 @@ export const checkSession = async (): Promise<boolean> => {
 
     return data.success === true;
   } catch (error: any) {
-    if (error.response?.status === 401) {
-      try {
-        await api.post("/auth/logout");
-      } catch {
-        // ничего
-      }
-    }
-
     return false;
   }
 };
