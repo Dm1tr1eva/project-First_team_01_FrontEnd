@@ -1,4 +1,4 @@
-import api from "./browserApi";
+import api, { type AuthAwareRequestConfig } from "./browserApi";
 import type { User, AuthUser, GetMeResponse } from "@/types/user";
 import type {
   Article,
@@ -181,7 +181,8 @@ export const getMe = async (): Promise<AuthUser> => {
 };
 export const checkSession = async (): Promise<boolean> => {
   try {
-    const { data } = await api.get("/auth/session");
+    const config: AuthAwareRequestConfig = { skipAuthRefresh: true };
+    const { data } = await api.get("/auth/session", config);
 
     return data.success === true;
   } catch (error: any) {

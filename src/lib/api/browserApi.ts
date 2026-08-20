@@ -1,4 +1,4 @@
-import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
 
 const browserApi = axios.create({
   baseURL: "/api",
@@ -6,8 +6,15 @@ const browserApi = axios.create({
   timeout: 10_000,
 });
 
+// /auth/session сам по собі є перевіркою "чи є валідна сесія" — 401 звідти
+// означає "гостя", а не протухлий access-токен, тож автоматичний refresh
+// тут не потрібен: він однаково провалиться для справжнього гостя і лише
+// подвоїть консольні помилки (FE-67). Викликачі передають це поле в config.
+export type AuthAwareRequestConfig = AxiosRequestConfig & { skipAuthRefresh?: boolean };
+
 type RetryConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
+  skipAuthRefresh?: boolean;
 };
 
 /**
@@ -66,6 +73,10 @@ browserApi.interceptors.response.use(
 
     // Не допускаем бесконечный retry
     if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    if (originalRequest.skipAuthRefresh) {
       return Promise.reject(error);
     }
 
