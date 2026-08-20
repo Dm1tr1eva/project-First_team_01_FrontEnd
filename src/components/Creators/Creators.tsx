@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import Loader from "@/components/Loader/Loader";
 import { getUsers } from "@/lib/api/clientApi";
 import css from "./Creators.module.css";
 
@@ -36,7 +37,11 @@ export default function Creators() {
         </Link>
       </div>
 
-      {isLoading && <p className={css.status}>Завантаження...</p>}
+      {isLoading && (
+        <div className={css.loader} role="status" aria-label="Loading top creators">
+          <Loader />
+        </div>
+      )}
       {isError && <p className={css.status}>Не вдалося завантажити авторів.</p>}
 
       {!isLoading && !isError && (

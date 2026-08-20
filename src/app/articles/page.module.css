@@ -40,6 +40,12 @@
   text-align: center;
 }
 
+.loader {
+  display: grid;
+  min-height: 492px;
+  place-items: center;
+}
+
 .error {
   color: var(--color-error);
 }

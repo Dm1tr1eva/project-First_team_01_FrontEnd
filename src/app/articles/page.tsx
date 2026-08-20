@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ArticleFilter, { type ArticlesFilterValue } from "@/components/ArticleFilter/ArticleFilter";
 import ArticlesEmptyState from "@/components/ArticlesEmptyState/ArticlesEmptyState";
 import ArticlesList from "@/components/ArticlesList/ArticlesList";
+import Loader from "@/components/Loader/Loader";
 import ModalErrorSave from "@/components/ModalErrorSave/ModalErrorSave";
 import Pagination from "@/components/Pagination/Pagination";
 import SectionTitle from "@/components/SectionTitle/SectionTitle";
@@ -186,9 +187,9 @@ export default function ArticlesPage() {
         </div>
 
         {isPending && (
-          <p className={css.message} role="status">
-            Loading articles...
-          </p>
+          <div className={css.loader} role="status" aria-label="Loading articles">
+            <Loader />
+          </div>
         )}
 
         {hasInitialError && (
