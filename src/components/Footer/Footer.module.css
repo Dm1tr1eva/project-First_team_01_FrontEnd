@@ -19,6 +19,7 @@
   font-weight: 700;
   font-size: 12px;
   color: #649179;
+  transition: color 160ms ease;
 }
 
 .footerLink:hover {
@@ -45,6 +46,7 @@
   font-weight: 700;
   font-size: 16px;
   color: #374f42;
+  transition: color 160ms ease;
 }
 
 .navigationLink:hover {

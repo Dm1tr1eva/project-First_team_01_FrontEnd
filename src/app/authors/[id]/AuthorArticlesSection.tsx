@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -55,6 +55,7 @@ export default function AuthorArticlesSection({
   const { data, error, isError, isFetching, isPending } = useQuery({
     queryKey: ["authorArticles", authorId, page],
     queryFn: () => getUserArticles(authorId, { page, perPage: ARTICLES_PER_PAGE }),
+    placeholderData: keepPreviousData,
   });
 
   const articles = data?.articles ?? [];

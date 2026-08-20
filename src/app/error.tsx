@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import css from "./error.module.css";
 
 export default function Error({
   error,
@@ -14,9 +15,11 @@ export default function Error({
   }, [error]);
 
   return (
-    <div>
-      <p>Something went wrong.</p>
-      <button onClick={() => retry()}>Try again</button>
+    <div className={css.wrapper}>
+      <p className={css.message}>Something went wrong.</p>
+      <button type="button" className={css.button} onClick={() => retry()}>
+        Try again
+      </button>
     </div>
   );
 }
