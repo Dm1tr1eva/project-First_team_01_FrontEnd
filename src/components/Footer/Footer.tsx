@@ -17,9 +17,17 @@ export default function Footer() {
             <use href="/sprite.svg#iconlogo" />
           </svg>
         </Link>
-        <p className={css.copyright}>
-          &copy; {new Date().getFullYear()} Harmoniq. All rights reserved.
-        </p>
+        <div className={css.legal}>
+          <p className={css.copyright}>
+            &copy; {new Date().getFullYear()} Harmoniq. All rights reserved.
+          </p>
+
+          <p className={css.consumerRights}>
+            As a user of Harmoniq you retain full rights to the content you publish and may edit
+            or delete it at any time from your profile. We do not sell your personal data to
+            third parties; account and content data can be removed on request.
+          </p>
+        </div>
 
         <ul className={css.navigation}>
           <li className={css.navigationItem}>
