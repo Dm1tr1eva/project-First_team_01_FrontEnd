@@ -118,7 +118,11 @@ export default function ArticlesPage() {
   // Scroll only once the requested page's data has actually landed (not while
   // `isFetching`), otherwise scrollIntoView targets a scroll height computed
   // from the still-old (usually longer) list and can undershoot after the
-  // shorter page renders in.
+  // shorter page renders in. Two rAFs on top of that: the list DOM updates in
+  // this same commit, and a smooth scrollIntoView started before the browser
+  // has painted the new (shorter) layout gets fought/cancelled by the
+  // browser's own scroll-anchoring as later paints (e.g. images) shift
+  // layout underneath it — waiting a full painted frame avoids the race.
   useEffect(() => {
     if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== page) {
       return;
@@ -130,11 +134,17 @@ export default function ArticlesPage() {
 
     pendingScrollPageRef.current = null;
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    sectionRef.current?.scrollIntoView({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
+    let rafId = requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        sectionRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      });
     });
+
+    return () => cancelAnimationFrame(rafId);
   }, [page, isFetching]);
 
   const handleFilterChange = (nextFilter: ArticlesFilterValue) => {
