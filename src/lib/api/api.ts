@@ -13,6 +13,10 @@ const client = axios.create({
   // немає браузерного cookie-jar, cookie й так передаються вручну через
   // authHeaders() у serverApi.ts/proxyRequest.ts
   timeout: 10_000,
+  // Бекендний мінімальний CSRF-захист (BE-06) вимагає цей заголовок на всіх
+  // мутуючих запитах — цей інстанс не браузер, CORS-preflight на нього не
+  // діє, тож просто ставимо заголовок на кожен запит.
+  headers: { "X-Requested-With": "XMLHttpRequest" },
 });
 
 export default client;
