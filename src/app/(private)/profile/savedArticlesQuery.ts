@@ -6,8 +6,14 @@ export type SavedArticlesWithAuthors = {
   authorNames: Record<string, string>;
 };
 
+// Перший елемент ключа — "saved-articles", той самий, що й у решти п'яти
+// місць, які кешують збережені статті (ButtonAddToBookmarks і споживачі).
+// Спільний префікс потрібен, щоб один invalidateQueries({queryKey: ["saved-articles"]})
+// зачепив одразу всі — інакше цей лічильник ніколи не дізнається про
+// save/unsave, зроблений деінде, і показує застаріле число, поки хтось не
+// перемонтує компонент заново (типово — хард-рефреш).
 export function savedArticlesQueryKey(currentUserId: string | undefined) {
-  return ["saved-articles-full", currentUserId] as const;
+  return ["saved-articles", currentUserId, "full"] as const;
 }
 
 export async function fetchSavedArticlesWithAuthors(): Promise<SavedArticlesWithAuthors> {
