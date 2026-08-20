@@ -1,6 +1,9 @@
 .section {
   display: flex;
   flex-direction: column;
+  /* Header — position: sticky, ~96px. Без цього scrollIntoView зупиняє
+     верх секції під шапкою. */
+  scroll-margin-top: 96px;
 }
 
 .message,
