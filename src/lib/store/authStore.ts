@@ -16,9 +16,18 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
 
       setUser: (user) => {
+        // Деякі бекендні відповіді (getMe, updateUser) віддають сирий Mongoose-
+        // документ з `_id`, а не нормалізований `id`, попри тип AuthUser —
+        // без цього user.id стає undefined і мовчки ламає все, що на нього
+        // зав'язане (лічильник збережених статей, підсвітка кнопки Save).
+        const normalizedUser =
+          user && !user.id
+            ? { ...user, id: (user as AuthUser & { _id?: string })._id ?? "" }
+            : user;
+
         set({
-          user,
-          isAuthenticated: user !== null,
+          user: normalizedUser,
+          isAuthenticated: normalizedUser !== null,
         });
       },
 

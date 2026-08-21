@@ -14,6 +14,9 @@
 .container {
   max-width: 393px;
   padding-block: 48px;
+  /* Header — position: sticky, ~96px. Без цього scrollIntoView зупиняє
+     верх секції під шапкою, і заголовок сторінки лишається прихованим. */
+  scroll-margin-top: 96px;
 }
 
 .toolbar {

@@ -119,6 +119,16 @@ export default function ArticlesPage() {
   // `isFetching`), otherwise scrollIntoView targets a scroll height computed
   // from the still-old (usually longer) list and can undershoot after the
   // shorter page renders in.
+  //
+  // Even so, measured live: something keeps shifting layout *during* the
+  // smooth-scroll animation itself (confirmed with instrumented clicks — a
+  // scrollIntoView call fired with the right target still lands short,
+  // consistently at exactly the new (shorter) page's max scroll position,
+  // as if the animation got clamped mid-flight). Waiting extra frames before
+  // starting didn't help, so instead of trying to out-wait the shift, we
+  // follow the smooth scroll with a second, instant scrollIntoView once its
+  // animation should be done — a no-op if we're already there, a hard
+  // correction if we undershot.
   useEffect(() => {
     if (pendingScrollPageRef.current === null || pendingScrollPageRef.current !== page) {
       return;
@@ -135,6 +145,12 @@ export default function ArticlesPage() {
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
+
+    const correctionTimeoutId = window.setTimeout(() => {
+      sectionRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 600);
+
+    return () => window.clearTimeout(correctionTimeoutId);
   }, [page, isFetching]);
 
   const handleFilterChange = (nextFilter: ArticlesFilterValue) => {

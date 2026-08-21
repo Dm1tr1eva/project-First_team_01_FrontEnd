@@ -40,11 +40,22 @@ export default function AuthorsList() {
 
     pendingScrollPageRef.current = null;
 
+    // A plain smooth scrollIntoView here measurably undershoots (lands at
+    // the new page's max scroll instead of the section top) — something
+    // keeps shifting layout mid-animation. Following it with an instant
+    // correction once the animation should be done fixes it reliably; a
+    // no-op if the smooth scroll already landed correctly.
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     sectionRef.current?.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
       block: "start",
     });
+
+    const correctionTimeoutId = window.setTimeout(() => {
+      sectionRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 600);
+
+    return () => window.clearTimeout(correctionTimeoutId);
   }, [page, isFetching]);
 
   const handlePageChange = (nextPage: number) => {
