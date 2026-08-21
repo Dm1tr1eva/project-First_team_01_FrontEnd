@@ -197,6 +197,13 @@
     height: 16px;
 }
 
+/* Mobile: 375px+ */
+@media screen and (min-width: 375px) {
+    .page {
+        max-width: var(--container-width-mobile);
+    }
+}
+
 /* Tablet: 768px+ */
 @media screen and (min-width: 768px) {
     .page {
