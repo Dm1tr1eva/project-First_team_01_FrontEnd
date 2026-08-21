@@ -23,9 +23,8 @@ export default function Footer() {
           </p>
 
           <p className={css.consumerRights}>
-            As a user of Harmoniq you retain full rights to the content you publish and may edit
-            or delete it at any time from your profile. We do not sell your personal data to
-            third parties; account and content data can be removed on request.
+            You retain full rights to your content and personal data — edit or remove either
+            anytime from your profile.
           </p>
         </div>
 
